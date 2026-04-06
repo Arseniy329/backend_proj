@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Групи — EduPlatform{% endblock %}
+{% block page_title %}Групи{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="filter-bar">
+        <form method="get" style="display:flex; gap:12px; align-items:center;">
+            <select name="branch" onchange="this.form.submit()">
+                <option value="">Всі гілки</option>
+                {% for b in branches %}
+                <option value="{{ b.pk }}" {% if selected_branch == b.pk|stringformat:"d" %}selected{% endif %}>{{ b.name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <div style="flex:1"></div>
+        <a href="{% url 'group_create' %}" class="btn btn-primary">+ Створити групу</a>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Назва</th>
+                    <th>Гілка</th>
+                    <th>Предмет</th>
+                    <th>Викладач</th>
+                    <th>Статус</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in groups %}
+                <tr>
+                    <td><strong>{{ group.name }}</strong></td>
+                    <td>{{ group.branch.name }}</td>
+                    <td>{{ group.subject.name }}</td>
+                    <td>{{ group.teacher|default:"—" }}</td>
+                    <td>
+                        {% if group.status == 'active' %}
+                            <span class="badge badge-active">Активна</span>
+                        {% else %}
+                            <span class="badge badge-inactive">Неактивна</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'group_edit' group.pk %}" class="btn btn-outline btn-sm">Ред.</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center; color: var(--text-muted); padding:32px;">Груп ще немає</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

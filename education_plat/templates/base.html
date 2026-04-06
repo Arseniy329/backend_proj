@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Education Platform{% endblock %}</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --sidebar-bg: #1e293b;
+            --sidebar-text: #cbd5e1;
+            --sidebar-active: #4f46e5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ─── Layout ─── */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            padding: 0 24px 24px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 16px;
+        }
+
+        .sidebar-brand span { color: var(--primary); }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-nav .nav-section {
+            padding: 16px 24px 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #475569;
+        }
+
+        .main {
+            flex: 1;
+            margin-left: 260px;
+            padding: 32px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .topbar h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .topbar-user .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* ─── Cards ─── */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ─── Tables ─── */
+        .table-wrapper { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        table th {
+            background: #f1f5f9;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+
+
+        /* ─── Buttons ─── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+
+        }
+
+        .btn-primary { background: var(--primary); color: #fff; }
+
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-warning { background: var(--warning); color: #fff; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+        /* ─── Forms ─── */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+
+            background: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        select.form-control { appearance: auto; }
+
+        textarea.form-control { min-height: 80px; resize: vertical; }
+
+        /* ─── Badges ─── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-active { background: #dcfce7; color: #166534; }
+        .badge-archived { background: #fee2e2; color: #991b1b; }
+        .badge-inactive { background: #f1f5f9; color: #475569; }
+
+        /* ─── Messages ─── */
+        .messages {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .messages li {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .messages .success { background: #dcfce7; color: #166534; }
+        .messages .error { background: #fee2e2; color: #991b1b; }
+        .messages .info { background: #dbeafe; color: #1e40af; }
+        .messages .warning { background: #fef3c7; color: #92400e; }
+
+        /* ─── Filter bar ─── */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        /* ─── Actions row ─── */
+        .actions-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ─── Login page ─── */
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        }
+
+        .login-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-card h2 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        .login-card .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .login-card .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 16px; }
+            .stat-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    {% block body %}
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                EduPlatform
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">Головне</div>
+                <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    Дашборд
+                </a>
+
+                <div class="nav-section">Управління</div>
+                <a href="{% url 'branch_list' %}" class="{% if 'branch' in request.resolver_match.url_name %}active{% endif %}">
+                    Гілки
+                </a>
+                <a href="{% url 'subject_list' %}" class="{% if 'subject' in request.resolver_match.url_name %}active{% endif %}">
+                    Предмети
+                </a>
+                <a href="{% url 'group_list' %}" class="{% if 'group' in request.resolver_match.url_name %}active{% endif %}">
+                    Групи
+                </a>
+                <a href="{% url 'student_list' %}" class="{% if 'student' in request.resolver_match.url_name %}active{% endif %}">
+                    Студенти
+                </a>
+
+                <div class="nav-section">Система</div>
+                <a href="{% url 'admin:index' %}">Адмін-панель</a>
+                <a href="{% url 'logout' %}">Вийти</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="topbar">
+                <h1>{% block page_title %}Дашборд{% endblock %}</h1>
+                <div class="topbar-user">
+                    <span>{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                    <div class="avatar">{{ request.user.first_name|first }}</div>
+                </div>
+            </div>
+
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% endblock %}
+</body>
+</html>

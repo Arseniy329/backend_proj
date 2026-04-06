@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Студенти — EduPlatform{% endblock %}
+{% block page_title %}Студенти{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="filter-bar">
+        <form method="get" style="display:flex; gap:12px; align-items:center;">
+            <select name="branch" onchange="this.form.submit()">
+                <option value="">Всі гілки</option>
+                {% for b in branches %}
+                <option value="{{ b.pk }}" {% if selected_branch == b.pk|stringformat:"d" %}selected{% endif %}>{{ b.name }}</option>
+                {% endfor %}
+            </select>
+            {% if show_archived %}
+            <input type="hidden" name="archived" value="1">
+            {% endif %}
+        </form>
+        <a href="{% url 'student_list' %}" class="btn {% if not show_archived %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Активні</a>
+        <a href="{% url 'student_list' %}?archived=1" class="btn {% if show_archived %}btn-danger{% else %}btn-outline{% endif %} btn-sm">Архів</a>
+        <div style="flex:1"></div>
+        <a href="{% url 'student_create' %}" class="btn btn-primary">+ Додати студента</a>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ім'я</th>
+                    <th>Прізвище</th>
+                    <th>Телефон</th>
+                    <th>Гілка</th>
+                    <th>Батьки (тел.)</th>
+                    <th>Статус</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td><strong>{{ student.first_name }}</strong></td>
+                    <td>{{ student.last_name }}</td>
+                    <td>{{ student.phone|default:"—" }}</td>
+                    <td>{{ student.branch|default:"—" }}</td>
+                    <td>{{ student.parent_phone|default:"—" }}</td>
+                    <td>
+                        {% if student.status == 'active' %}
+                            <span class="badge badge-active">Активний</span>
+                        {% else %}
+                            <span class="badge badge-archived">Архівований</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="actions-row">
+                            <a href="{% url 'student_edit' student.pk %}" class="btn btn-outline btn-sm">Ред.</a>
+                            {% if student.status == 'active' %}
+                                <a href="{% url 'student_archive' student.pk %}" class="btn btn-danger btn-sm">Архів</a>
+                            {% else %}
+                                <a href="{% url 'student_restore' student.pk %}" class="btn btn-success btn-sm">Відновити</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align:center; color: var(--text-muted); padding:32px;">
+                        {% if show_archived %}Архів порожній{% else %}Студентів ще немає{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

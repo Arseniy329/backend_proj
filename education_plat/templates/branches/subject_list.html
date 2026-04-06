@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Предмети — EduPlatform{% endblock %}
+{% block page_title %}Предмети{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="filter-bar">
+        <form method="get" style="display:flex; gap:12px; align-items:center;">
+            <select name="branch" onchange="this.form.submit()">
+                <option value="">Всі гілки</option>
+                {% for b in branches %}
+                <option value="{{ b.pk }}" {% if selected_branch == b.pk|stringformat:"d" %}selected{% endif %}>{{ b.name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <div style="flex:1"></div>
+        <a href="{% url 'subject_create' %}" class="btn btn-primary">+ Створити предмет</a>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Назва</th>
+                    <th>Статус</th>
+                    <th>Створено</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject in subjects %}
+                <tr>
+                    <td><strong>{{ subject.name }}</strong></td>
+                    <td>
+                        {% if subject.status == 'active' %}
+                            <span class="badge badge-active">Активний</span>
+                        {% else %}
+                            <span class="badge badge-archived">Архівований</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ subject.created_at|date:"d.m.Y" }}</td>
+                    <td>
+                        <a href="{% url 'subject_edit' subject.pk %}" class="btn btn-outline btn-sm">Ред.</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align:center; color: var(--text-muted); padding:32px;">Предметів ще немає</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
