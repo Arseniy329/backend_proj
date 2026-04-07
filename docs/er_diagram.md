@@ -1,111 +1,126 @@
-# ER Diagram — Education Platform
+# ER-діаграма бази даних
 
-## Діаграма зв'язків між сутностями
+## Огляд
 
+База даних складається з **8 моделей** у **3 додатках** Django.
+
+| Додаток    | Моделі                                                    |
+|------------|-----------------------------------------------------------|
+| `users`    | CustomUser                                                |
+| `branches` | Branch, Subject, Group, SubscriptionPlan, Lesson, Attendance |
+| `students` | Student                                                   |
+
+---
+
+## Діаграма зв'язків
+
+```mermaid
+erDiagram
+    CustomUser {
+        BigAutoField id PK
+        CharField phone UK
+        CharField first_name
+        CharField last_name
+        CharField role "admin | teacher"
+        BooleanField is_active
+        BooleanField is_staff
+        DateTimeField date_joined
+    }
+
+    Branch {
+        BigAutoField id PK
+        CharField name
+        CharField address
+        CharField city
+        CharField status "active | archived"
+    }
+
+    Subject {
+        BigAutoField id PK
+        CharField name
+        TextField description
+        CharField status "active | archived"
+    }
+
+    Group {
+        BigAutoField id PK
+        CharField name
+        FK branch
+        FK subject
+        FK teacher
+        CharField status "active | inactive"
+    }
+
+    Student {
+        BigAutoField id PK
+        CharField first_name
+        CharField last_name
+        CharField phone
+        DateField date_of_birth
+        CharField parent_name
+        CharField parent_phone
+        EmailField parent_email
+        FK branch
+        CharField status "active | archived"
+    }
+
+    SubscriptionPlan {
+        BigAutoField id PK
+        CharField name
+        PositiveIntegerField lessons_count
+        DecimalField price
+        PositiveIntegerField duration_days
+        FK branch
+    }
+
+    Lesson {
+        BigAutoField id PK
+        FK group
+        FK teacher
+        DateField date
+        TimeField start_time
+        TimeField end_time
+        CharField topic
+        CharField status "scheduled | completed | cancelled"
+    }
+
+    Attendance {
+        BigAutoField id PK
+        FK lesson
+        FK student
+        CharField status "present | absent | late"
+        TextField note
+    }
+
+    Branch ||--o{ Group : "has"
+    Branch ||--o{ Student : "enrolled in"
+    Branch ||--o{ SubscriptionPlan : "offers"
+    Subject ||--o{ Group : "taught in"
+    Subject }o--o{ Branch : "M2M available at"
+    CustomUser ||--o{ Group : "teaches"
+    CustomUser ||--o{ Lesson : "conducts"
+    Student }o--o{ Group : "M2M belongs to"
+    Group ||--o{ Lesson : "has"
+    Lesson ||--o{ Attendance : "tracks"
+    Student ||--o{ Attendance : "recorded for"
 ```
-┌─────────────────────┐       ┌─────────────────────┐
-│    CustomUser        │       │      Branch          │
-│─────────────────────│       │─────────────────────│
-│ PK id               │       │ PK id                │
-│    phone (unique)    │       │    name              │
-│    first_name        │       │    address           │
-│    last_name         │       │    city              │
-│    role (admin/      │       │    status (active/   │
-│         teacher)     │       │           archived)  │
-│    is_active         │       │    created_at        │
-│    is_staff          │       └──────────┬──────────┘
-│    date_joined       │                  │
-└──────────┬──────────┘                  │ 1
-           │                             │
-           │                    ┌────────┴─────────┐
-           │                    │                  │
-           │ 1                  │ *                │ *
-  ┌────────┴──────────┐  ┌─────┴───────────┐ ┌───┴──────────────┐
-  │      Lesson        │  │    Student       │ │ SubscriptionPlan │
-  │───────────────────│  │────────────────│ │─────────────────│
-  │ PK id              │  │ PK id           │ │ PK id            │
-  │ FK group_id        │  │    first_name   │ │    name           │
-  │ FK teacher_id ─────┤  │    last_name    │ │    lessons_count  │
-  │    date            │  │    phone        │ │    price          │
-  │    start_time      │  │    date_of_birth│ │    duration_days  │
-  │    end_time        │  │    parent_name  │ │ FK branch_id      │
-  │    topic           │  │    parent_phone │ │    created_at     │
-  │    status           │  │    parent_email │ └──────────────────┘
-  │    created_at      │  │ FK branch_id    │
-  └────────┬──────────┘  │    status        │
-           │              │    created_at   │
-           │ 1            └────────┬───────┘
-           │                       │
-           │                       │ M2M (through Group.students)
-      ┌────┴──────────┐           │
-      │  Attendance    │     ┌────┴────────────┐
-      │───────────────│     │     Group         │
-      │ PK id          │     │────────────────│
-      │ FK lesson_id   │     │ PK id            │
-      │ FK student_id ─┼─────│ FK branch_id     │
-      │    status       │     │ FK subject_id    │
-      │    note        │     │ FK teacher_id    │
-      │    created_at  │     │ M2M students     │
-      └───────────────┘     │    name           │
-                             │    status         │
-                             │    created_at     │
-                             └────────┬─────────┘
-                                      │
-                                      │ FK
-                              ┌───────┴────────┐
-                              │    Subject      │
-                              │───────────────│
-                              │ PK id           │
-                              │    name         │
-                              │    description  │
-                              │    status       │
-                              │ M2M branches    │
-                              │    created_at   │
-                              └────────────────┘
-```
 
-## Зв'язки (Relationships)
+---
 
-| Зв'язок | Тип | Опис |
-|---------|-----|------|
-| Branch → Student | One-to-Many | Гілка має багато студентів |
-| Branch → Group | One-to-Many | Гілка має багато груп |
-| Branch → SubscriptionPlan | One-to-Many | Гілка має багато абонементів |
-| Subject ↔ Branch | Many-to-Many | Предмет може викладатися в кількох гілках |
-| Subject → Group | One-to-Many | Предмет має багато груп |
-| CustomUser → Group | One-to-Many | Викладач веде багато груп |
-| CustomUser → Lesson | One-to-Many | Викладач проводить багато занять |
-| Group → Lesson | One-to-Many | Група має багато занять |
-| Group ↔ Student | Many-to-Many | Студент може бути в кількох групах |
-| Lesson → Attendance | One-to-Many | Заняття має багато записів відвідування |
-| Student → Attendance | One-to-Many | Студент має багато записів відвідування |
+## Таблиця зв'язків
 
-## Сутності
+| Зв'язок | Тип | on_delete | Опис |
+|---------|-----|-----------|------|
+| Group → Branch | FK | CASCADE | Група належить до гілки |
+| Group → Subject | FK | CASCADE | Група вивчає предмет |
+| Group → CustomUser | FK | SET_NULL | Викладач групи (необов'язковий) |
+| Group ↔ Student | M2M | — | Студенти в групі |
+| Subject ↔ Branch | M2M | — | Предмет доступний у гілках |
+| Student → Branch | FK | CASCADE | Студент прикріплений до гілки |
+| SubscriptionPlan → Branch | FK | CASCADE | Абонемент для конкретної гілки |
+| Lesson → Group | FK | CASCADE | Заняття в групі |
+| Lesson → CustomUser | FK | SET_NULL | Викладач заняття |
+| Attendance → Lesson | FK | CASCADE | Відвідування заняття |
+| Attendance → Student | FK | CASCADE | Відвідування студентом |
 
-### CustomUser (Користувач)
-- Ідентифікація за номером телефону
-- Ролі: `admin`, `teacher`
-
-### Branch (Гілка)
-- Фізична локація навчального закладу
-- Soft delete через статус `archived`
-
-### Subject (Предмет)
-- Дисципліна, яка викладається
-- M2M зв'язок з гілками
-
-### Student (Студент)
-- Учень з контактами батьків
-- Soft delete через статус `archived`
-
-### Group (Група)
-- Навчальна група: гілка + предмет + викладач + студенти
-
-### SubscriptionPlan (Абонемент)
-- Тарифний план: кількість занять, ціна, тривалість
-
-### Lesson (Заняття)
-- Окреме заняття: дата, час, тема, статус
-
-### Attendance (Відвідування)
-- Запис відвідування: студент + заняття + статус
+> **Constraint:** `Attendance` має `unique_together = ('lesson', 'student')` — один запис на студента на заняття.
