@@ -29,10 +29,10 @@ class SubjectAdmin(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'branch', 'subject', 'teacher', 'status', 'created_at')
-    list_filter = ('status', 'branch', 'subject')
+    list_display = ('name', 'branch', 'status', 'created_at')
+    list_filter = ('status', 'branch')
     search_fields = ('name',)
-    filter_horizontal = ('students',)
+    filter_horizontal = ('students', 'subjects')
 
 
 @admin.register(SubscriptionPlan)
@@ -44,8 +44,8 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ('group', 'teacher', 'date', 'start_time', 'end_time', 'status', 'created_at')
-    list_filter = ('status', 'date', 'group__branch')
+    list_display = ('group', 'subject', 'teacher', 'date', 'start_time', 'end_time', 'status', 'created_at')
+    list_filter = ('status', 'date', 'group__branch', 'subject')
     search_fields = ('topic', 'group__name')
     date_hierarchy = 'date'
 

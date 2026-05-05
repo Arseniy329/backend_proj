@@ -22,22 +22,13 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="subject">Предмет</label>
-            <select id="subject" name="subject" class="form-control" required>
-                <option value="">Оберіть предмет</option>
+            <label for="subjects">Предмети</label>
+            <select id="subjects" name="subjects" class="form-control" multiple required style="height: 120px;">
                 {% for s in subjects %}
-                <option value="{{ s.pk }}" {% if group and group.subject_id == s.pk %}selected{% endif %}>{{ s.name }}</option>
+                <option value="{{ s.pk }}" {% if group and s in group.subjects.all %}selected{% endif %}>{{ s.name }}</option>
                 {% endfor %}
             </select>
-        </div>
-        <div class="form-group">
-            <label for="teacher">Викладач</label>
-            <select id="teacher" name="teacher" class="form-control">
-                <option value="">— Не вказано —</option>
-                {% for t in teachers %}
-                <option value="{{ t.pk }}" {% if group and group.teacher_id == t.pk %}selected{% endif %}>{{ t.first_name }} {{ t.last_name }}</option>
-                {% endfor %}
-            </select>
+            <small style="color:var(--text-muted)">Утримуйте Ctrl (або Cmd), щоб обрати декілька</small>
         </div>
         <div style="display:flex; gap:12px;">
             <button type="submit" class="btn btn-primary">{{ action }}</button>

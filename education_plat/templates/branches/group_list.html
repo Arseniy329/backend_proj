@@ -24,8 +24,7 @@
                 <tr>
                     <th>Назва</th>
                     <th>Гілка</th>
-                    <th>Предмет</th>
-                    <th>Викладач</th>
+                    <th>Предмети</th>
                     <th>Статус</th>
                     <th>Дії</th>
                 </tr>
@@ -35,8 +34,13 @@
                 <tr>
                     <td><strong>{{ group.name }}</strong></td>
                     <td>{{ group.branch.name }}</td>
-                    <td>{{ group.subject.name }}</td>
-                    <td>{{ group.teacher|default:"—" }}</td>
+                    <td>
+                        {% for s in group.subjects.all %}
+                            <span class="badge" style="background:#eee; color:#333">{{ s.name }}</span>
+                        {% empty %}
+                            —
+                        {% endfor %}
+                    </td>
                     <td>
                         {% if group.status == 'active' %}
                             <span class="badge badge-active">Активна</span>
@@ -50,7 +54,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" style="text-align:center; color: var(--text-muted); padding:32px;">Груп ще немає</td>
+                    <td colspan="5" style="text-align:center; color: var(--text-muted); padding:32px;">Груп ще немає</td>
                 </tr>
                 {% endfor %}
             </tbody>

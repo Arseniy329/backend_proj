@@ -82,20 +82,11 @@ class Group(models.Model):
         verbose_name='Гілка',
         related_name='groups',
     )
-    subject = models.ForeignKey(
+    subjects = models.ManyToManyField(
         Subject,
-        on_delete=models.CASCADE,
-        verbose_name='Предмет',
+        verbose_name='Предмети',
         related_name='groups',
-    )
-    teacher = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        verbose_name='Викладач',
-        related_name='teaching_groups',
-        null=True,
         blank=True,
-        limit_choices_to={'role': 'teacher'},
     )
     students = models.ManyToManyField(
         'students.Student',
@@ -116,7 +107,7 @@ class Group(models.Model):
         verbose_name_plural = 'Групи'
 
     def __str__(self):
-        return f'{self.name} — {self.subject.name} ({self.branch.name})'
+        return f'{self.name} ({self.branch.name})'
 
 
 class SubscriptionPlan(models.Model):
@@ -153,6 +144,14 @@ class Lesson(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Група',
         related_name='lessons',
+    )
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.CASCADE,
+        verbose_name='Предмет',
+        related_name='lessons',
+        null=True,
+        blank=True,
     )
     teacher = models.ForeignKey(
         settings.AUTH_USER_MODEL,

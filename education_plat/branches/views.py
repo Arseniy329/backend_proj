@@ -140,7 +140,7 @@ def subject_edit(request, pk):
 @login_required
 def group_list(request):
     branch_id = request.GET.get('branch')
-    groups = Group.objects.select_related('branch', 'subject', 'teacher').filter(status='active')
+    groups = Group.objects.select_related('branch').prefetch_related('subjects').filter(status='active')
     if branch_id:
         groups = groups.filter(branch_id=branch_id)
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
@@ -153,66 +153,57 @@ def group_list(request):
 
 @login_required
 def group_create(request):
-    from users.models import CustomUser
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
     subjects = Subject.objects.filter(status=Subject.Status.ACTIVE)
-    teachers = CustomUser.objects.filter(role='teacher', is_active=True)
 
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         branch_id = request.POST.get('branch')
-        subject_id = request.POST.get('subject')
-        teacher_id = request.POST.get('teacher')
+        subject_ids = request.POST.getlist('subjects')
 
-        if not name or not branch_id or not subject_id:
-            messages.error(request, 'Назва, гілка та предмет обов\'язкові.')
+        if not name or not branch_id or not subject_ids:
+            messages.error(request, 'Назва, гілка та предмети обов\'язкові.')
             return render(request, 'branches/group_form.html', {
-                'branches': branches, 'subjects': subjects,
-                'teachers': teachers, 'action': 'Створити'
+                'branches': branches, 'subjects': subjects, 'action': 'Створити'
             })
 
         group = Group.objects.create(
             name=name,
             branch_id=branch_id,
-            subject_id=subject_id,
-            teacher_id=teacher_id if teacher_id else None,
         )
+        group.subjects.set(subject_ids)
         messages.success(request, f'Групу "{name}" створено.')
         return redirect('group_list')
 
     return render(request, 'branches/group_form.html', {
-        'branches': branches, 'subjects': subjects,
-        'teachers': teachers, 'action': 'Створити'
+        'branches': branches, 'subjects': subjects, 'action': 'Створити'
     })
 
 
 @login_required
 def group_edit(request, pk):
-    from users.models import CustomUser
     group = get_object_or_404(Group, pk=pk)
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
     subjects = Subject.objects.filter(status=Subject.Status.ACTIVE)
-    teachers = CustomUser.objects.filter(role='teacher', is_active=True)
 
     if request.method == 'POST':
         group.name = request.POST.get('name', '').strip()
         group.branch_id = request.POST.get('branch')
-        group.subject_id = request.POST.get('subject')
-        teacher_id = request.POST.get('teacher')
-        group.teacher_id = teacher_id if teacher_id else None
+        subject_ids = request.POST.getlist('subjects')
 
-        if not group.name or not group.branch_id or not group.subject_id:
-            messages.error(request, 'Назва, гілка та предмет обов\'язкові.')
+        if not group.name or not group.branch_id or not subject_ids:
+            messages.error(request, 'Назва, гілка та предмети обов\'язкові.')
             return render(request, 'branches/group_form.html', {
                 'group': group, 'branches': branches, 'subjects': subjects,
-                'teachers': teachers, 'action': 'Зберегти'
+                'action': 'Зберегти'
             })
 
         group.save()
+        group.subjects.set(subject_ids)
         messages.success(request, f'Групу "{group.name}" оновлено.')
         return redirect('group_list')
 
     return render(request, 'branches/group_form.html', {
         'group': group, 'branches': branches, 'subjects': subjects,
-        'teachers': teachers, 'action': 'Зберегти'
+        'action': 'Зберегти'
     })
