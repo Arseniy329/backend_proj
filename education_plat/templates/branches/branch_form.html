@@ -9,18 +9,24 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="name">Назва</label>
-            <input type="text" id="name" name="name" class="form-control"
-                   value="{{ branch.name|default:'' }}" required>
+            <input type="text" id="name" name="name" class="form-control" value="{{ branch.name|default:'' }}" required>
         </div>
         <div class="form-group">
             <label for="city">Місто</label>
-            <input type="text" id="city" name="city" class="form-control"
-                   value="{{ branch.city|default:'' }}" required>
+            <input type="text" id="city" name="city" class="form-control" value="{{ branch.city|default:'' }}" required>
         </div>
         <div class="form-group">
             <label for="address">Адреса</label>
-            <input type="text" id="address" name="address" class="form-control"
-                   value="{{ branch.address|default:'' }}">
+            <input type="text" id="address" name="address" class="form-control" value="{{ branch.address|default:'' }}">
+        </div>
+        <div class="form-group">
+            <label for="country">Країна</label>
+            <select id="country" name="country" class="form-control">
+                <option value="">— Оберіть країну —</option>
+                {% for c in countries %}
+                <option value="{{ c.pk }}" {% if branch.country_id == c.pk %}selected{% endif %}>{{ c.name }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div style="display:flex; gap:12px;">
             <button type="submit" class="btn btn-primary">{{ action }}</button>

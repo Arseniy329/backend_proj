@@ -5,11 +5,8 @@ from django.contrib import messages
 from .models import Branch, Subject, Group
 
 
-# ─── Branch CRUD ──────────────────────────────────────────────
-
 @login_required
 def branch_list(request):
-    """Список гілок (тільки активні, архівовані — окремо)."""
     show_archived = request.GET.get('archived', '') == '1'
     if show_archived:
         branches = Branch.objects.filter(status=Branch.Status.ARCHIVED)
@@ -23,12 +20,10 @@ def branch_list(request):
 
 @login_required
 def branch_create(request):
-    """Створити нову гілку."""
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         address = request.POST.get('address', '').strip()
         city = request.POST.get('city', '').strip()
-
         if not name or not city:
             messages.error(request, 'Назва та місто обов\'язкові.')
             return render(request, 'branches/branch_form.html', {'action': 'Створити'})
@@ -42,7 +37,6 @@ def branch_create(request):
 
 @login_required
 def branch_edit(request, pk):
-    """Редагувати гілку."""
     branch = get_object_or_404(Branch, pk=pk)
 
     if request.method == 'POST':
@@ -63,7 +57,6 @@ def branch_edit(request, pk):
 
 @login_required
 def branch_archive(request, pk):
-    """Архівувати гілку (soft delete)."""
     branch = get_object_or_404(Branch, pk=pk)
     branch.archive()
     messages.success(request, f'Гілку "{branch.name}" архівовано.')
@@ -72,18 +65,14 @@ def branch_archive(request, pk):
 
 @login_required
 def branch_restore(request, pk):
-    """Відновити гілку з архіву."""
     branch = get_object_or_404(Branch, pk=pk)
     branch.restore()
     messages.success(request, f'Гілку "{branch.name}" відновлено.')
     return redirect('branch_list')
 
 
-# ─── Subject CRUD ─────────────────────────────────────────────
-
 @login_required
 def subject_list(request):
-    """Список предметів з фільтрацією по гілці."""
     branch_id = request.GET.get('branch')
     subjects = Subject.objects.filter(status=Subject.Status.ACTIVE)
     if branch_id:
@@ -98,7 +87,6 @@ def subject_list(request):
 
 @login_required
 def subject_create(request):
-    """Створити новий предмет."""
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
 
     if request.method == 'POST':
@@ -125,7 +113,6 @@ def subject_create(request):
 
 @login_required
 def subject_edit(request, pk):
-    """Редагувати предмет."""
     subject = get_object_or_404(Subject, pk=pk)
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
 
@@ -150,11 +137,8 @@ def subject_edit(request, pk):
     })
 
 
-# ─── Group CRUD ───────────────────────────────────────────────
-
 @login_required
 def group_list(request):
-    """Список груп з фільтрацією по гілці."""
     branch_id = request.GET.get('branch')
     groups = Group.objects.select_related('branch', 'subject', 'teacher').filter(status='active')
     if branch_id:
@@ -169,7 +153,6 @@ def group_list(request):
 
 @login_required
 def group_create(request):
-    """Створити нову групу."""
     from users.models import CustomUser
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
     subjects = Subject.objects.filter(status=Subject.Status.ACTIVE)
@@ -205,7 +188,6 @@ def group_create(request):
 
 @login_required
 def group_edit(request, pk):
-    """Редагувати групу."""
     from users.models import CustomUser
     group = get_object_or_404(Group, pk=pk)
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)

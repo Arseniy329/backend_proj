@@ -8,7 +8,6 @@ from branches.models import Branch
 
 @login_required
 def student_list(request):
-    """Список студентів з фільтрацією по гілці та статусу."""
     branch_id = request.GET.get('branch')
     show_archived = request.GET.get('archived', '') == '1'
 
@@ -33,7 +32,6 @@ def student_list(request):
 
 @login_required
 def student_create(request):
-    """Створити нового студента."""
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
 
     if request.method == 'POST':
@@ -72,7 +70,6 @@ def student_create(request):
 
 @login_required
 def student_edit(request, pk):
-    """Редагувати студента."""
     student = get_object_or_404(Student, pk=pk)
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
 
@@ -104,7 +101,6 @@ def student_edit(request, pk):
 
 @login_required
 def student_archive(request, pk):
-    """Архівувати студента (soft delete)."""
     student = get_object_or_404(Student, pk=pk)
     student.archive()
     messages.success(request, f'Студента "{student}" архівовано.')
@@ -113,7 +109,6 @@ def student_archive(request, pk):
 
 @login_required
 def student_restore(request, pk):
-    """Відновити студента з архіву."""
     student = get_object_or_404(Student, pk=pk)
     student.restore()
     messages.success(request, f'Студента "{student}" відновлено.')

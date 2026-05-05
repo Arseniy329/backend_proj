@@ -2,11 +2,6 @@ from django.db import models
 
 
 class Student(models.Model):
-    """
-    Студент із контактними даними батьків.
-    FK → Branch.
-    Підтримує архівування замість видалення.
-    """
 
     class Status(models.TextChoices):
         ACTIVE = 'active', 'Активний'
@@ -17,7 +12,6 @@ class Student(models.Model):
     phone = models.CharField('Телефон', max_length=20, blank=True)
     date_of_birth = models.DateField('Дата народження', null=True, blank=True)
 
-    # Контактні дані батьків
     parent_name = models.CharField('ПІБ батьків', max_length=255, blank=True)
     parent_phone = models.CharField('Телефон батьків', max_length=20, blank=True)
     parent_email = models.EmailField('Email батьків', blank=True)
@@ -46,12 +40,10 @@ class Student(models.Model):
         return f'{self.first_name} {self.last_name}'
 
     def archive(self):
-        """Архівувати студента замість видалення."""
         self.status = self.Status.ARCHIVED
         self.save(update_fields=['status'])
 
     def restore(self):
-        """Відновити студента з архіву."""
         self.status = self.Status.ACTIVE
         self.save(update_fields=['status'])
 

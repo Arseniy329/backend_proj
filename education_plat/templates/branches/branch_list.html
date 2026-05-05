@@ -6,8 +6,10 @@
 {% block content %}
 <div class="card">
     <div class="filter-bar">
-        <a href="{% url 'branch_list' %}" class="btn {% if not show_archived %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Активні</a>
-        <a href="{% url 'branch_list' %}?archived=1" class="btn {% if show_archived %}btn-danger{% else %}btn-outline{% endif %} btn-sm">Архів</a>
+        <a href="{% url 'branch_list' %}"
+            class="btn {% if not show_archived %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Активні</a>
+        <a href="{% url 'branch_list' %}?archived=1"
+            class="btn {% if show_archived %}btn-danger{% else %}btn-outline{% endif %} btn-sm">Архів</a>
         <div style="flex:1"></div>
         <a href="{% url 'branch_create' %}" class="btn btn-primary">+ Створити гілку</a>
     </div>
@@ -32,9 +34,9 @@
                     <td>{{ branch.address }}</td>
                     <td>
                         {% if branch.status == 'active' %}
-                            <span class="badge badge-active">Активна</span>
+                        <span class="badge badge-active">Активна</span>
                         {% else %}
-                            <span class="badge badge-archived">Архівована</span>
+                        <span class="badge badge-archived">Архівована</span>
                         {% endif %}
                     </td>
                     <td>{{ branch.created_at|date:"d.m.Y" }}</td>
@@ -42,9 +44,9 @@
                         <div class="actions-row">
                             <a href="{% url 'branch_edit' branch.pk %}" class="btn btn-outline btn-sm">Ред.</a>
                             {% if branch.status == 'active' %}
-                                <a href="{% url 'branch_archive' branch.pk %}" class="btn btn-danger btn-sm">Архів</a>
+                            <a href="{% url 'branch_archive' branch.pk %}" class="btn btn-danger btn-sm">Архів</a>
                             {% else %}
-                                <a href="{% url 'branch_restore' branch.pk %}" class="btn btn-success btn-sm">Відновити</a>
+                            <a href="{% url 'branch_restore' branch.pk %}" class="btn btn-success btn-sm">Відновити</a>
                             {% endif %}
                         </div>
                     </td>

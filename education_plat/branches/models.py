@@ -3,11 +3,6 @@ from django.db import models
 
 
 class Branch(models.Model):
-    """
-    Гілка (філія) навчального закладу.
-    Поля: назва, адреса, місто, статус.
-    Підтримує архівування замість видалення.
-    """
 
     class Status(models.TextChoices):
         ACTIVE = 'active', 'Активна'
@@ -32,12 +27,10 @@ class Branch(models.Model):
         return f'{self.name} ({self.city})'
 
     def archive(self):
-        """Архівувати гілку замість видалення."""
         self.status = self.Status.ARCHIVED
         self.save(update_fields=['status'])
 
     def restore(self):
-        """Відновити гілку з архіву."""
         self.status = self.Status.ACTIVE
         self.save(update_fields=['status'])
 
@@ -47,10 +40,6 @@ class Branch(models.Model):
 
 
 class Subject(models.Model):
-    """
-    Предмет (дисципліна).
-    M2M зв'язок із Branch — предмет може викладатися в кількох гілках.
-    """
 
     class Status(models.TextChoices):
         ACTIVE = 'active', 'Активний'
@@ -81,11 +70,6 @@ class Subject(models.Model):
 
 
 class Group(models.Model):
-    """
-    Навчальна група.
-    FK → Branch, FK → Subject, FK → Teacher (User).
-    M2M → Student.
-    """
 
     class Status(models.TextChoices):
         ACTIVE = 'active', 'Активна'
@@ -136,10 +120,6 @@ class Group(models.Model):
 
 
 class SubscriptionPlan(models.Model):
-    """
-    Абонемент / підписка.
-    Визначає кількість занять, ціну та термін дії.
-    """
 
     name = models.CharField('Назва', max_length=255)
     lessons_count = models.PositiveIntegerField('Кількість занять')
@@ -162,10 +142,6 @@ class SubscriptionPlan(models.Model):
 
 
 class Lesson(models.Model):
-    """
-    Заняття (урок).
-    FK → Group, FK → Teacher.
-    """
 
     class Status(models.TextChoices):
         SCHEDULED = 'scheduled', 'Заплановано'
@@ -208,10 +184,6 @@ class Lesson(models.Model):
 
 
 class Attendance(models.Model):
-    """
-    Відвідування.
-    FK → Lesson, FK → Student.
-    """
 
     class Status(models.TextChoices):
         PRESENT = 'present', 'Присутній'
