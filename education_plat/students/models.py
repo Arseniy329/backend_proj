@@ -29,7 +29,9 @@ class Student(models.Model):
         max_length=10,
         choices=Status.choices,
         default=Status.ACTIVE,
+        db_index=True,
     )
+    notes = models.TextField('Нотатки', blank=True)
     created_at = models.DateTimeField('Дата створення', auto_now_add=True)
 
     class Meta:

@@ -118,7 +118,7 @@ class SubscriptionPlan(models.Model):
     duration_days = models.PositiveIntegerField('Тривалість (днів)', default=30)
     branch = models.ForeignKey(
         Branch,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name='Гілка',
         related_name='subscription_plans',
     )
@@ -161,15 +161,23 @@ class Lesson(models.Model):
         null=True,
         blank=True,
     )
-    date = models.DateField('Дата')
+    date = models.DateField('Дата', db_index=True)
     start_time = models.TimeField('Час початку')
     end_time = models.TimeField('Час закінчення')
     topic = models.CharField('Тема', max_length=255, blank=True)
+    room = models.CharField(
+        'Аудиторія/кімната',
+        max_length=50,
+        blank=True,
+        help_text='Номер аудиторії або назва кімнати',
+    )
+    notes = models.TextField('Нотатки', blank=True)
     status = models.CharField(
         'Статус',
         max_length=10,
         choices=Status.choices,
         default=Status.SCHEDULED,
+        db_index=True,
     )
     created_at = models.DateTimeField('Дата створення', auto_now_add=True)
 

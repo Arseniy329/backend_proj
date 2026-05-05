@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import Branch, Subject, Lesson
+from .models import Branch, Subject, Lesson, Group
+from .validators import check_schedule_conflicts, get_group_student_ids
 
 
 class BranchSerializer(serializers.ModelSerializer):
@@ -50,7 +51,6 @@ class SubjectSerializer(serializers.ModelSerializer):
         name = attrs.get('name', getattr(self.instance, 'name', None))
         branches = attrs.get('branches', None)
 
-        # При PATCH branches може не передаватися — беремо поточні
         if branches is None and self.instance:
             branches = list(self.instance.branches.all())
 
@@ -60,7 +60,6 @@ class SubjectSerializer(serializers.ModelSerializer):
                 branches__in=branches,
                 status=Subject.Status.ACTIVE,
             )
-            # Виключаємо поточний об'єкт при оновленні
             if self.instance:
                 existing = existing.exclude(pk=self.instance.pk)
 
@@ -77,6 +76,8 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 
 class LessonSerializer(serializers.ModelSerializer):
+
+
     class Meta:
         model = Lesson
         fields = [
@@ -88,6 +89,8 @@ class LessonSerializer(serializers.ModelSerializer):
             'start_time',
             'end_time',
             'topic',
+            'room',
+            'notes',
             'status',
             'created_at',
         ]
@@ -103,3 +106,41 @@ class LessonSerializer(serializers.ModelSerializer):
                 f'Неможливо створити заняття з архівованим предметом.'
             )
         return value
+
+    def validate(self, attrs):
+
+        start_time = attrs.get('start_time', getattr(self.instance, 'start_time', None))
+        end_time = attrs.get('end_time', getattr(self.instance, 'end_time', None))
+        date = attrs.get('date', getattr(self.instance, 'date', None))
+        teacher = attrs.get('teacher', getattr(self.instance, 'teacher', None))
+        group = attrs.get('group', getattr(self.instance, 'group', None))
+
+        if start_time and end_time and start_time >= end_time:
+            raise serializers.ValidationError({
+                'end_time': (
+                    f'Час закінчення ({end_time}) повинен бути '
+                    f'строго пізніше часу початку ({start_time}).'
+                ),
+            })
+
+        if date and start_time and end_time:
+            exclude_id = self.instance.pk if self.instance else None
+            student_ids = get_group_student_ids(group) if group else None
+
+            conflicts = check_schedule_conflicts(
+                date=date,
+                start_time=start_time,
+                end_time=end_time,
+                teacher=teacher,
+                student_ids=student_ids,
+                exclude_lesson_id=exclude_id,
+            )
+
+            if conflicts:
+                error_messages = [c['message'] for c in conflicts]
+                raise serializers.ValidationError({
+                    'schedule_conflict': error_messages,
+                })
+
+        return attrs
+
