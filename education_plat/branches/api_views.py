@@ -1,6 +1,7 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, serializers as drf_serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema, inline_serializer
 
 from .models import Branch, Subject, Lesson, Group, SubscriptionPlan, Attendance
 from .permissions import (
@@ -100,6 +101,11 @@ class BranchViewSet(viewsets.ModelViewSet):
         branch.archive()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        summary='Відновити філію з архіву',
+        request=None,
+        responses={200: BranchSerializer, 400: None},
+    )
     @action(detail=True, methods=['post'])
     def restore(self, request, pk=None):
         """
@@ -178,6 +184,11 @@ class SubjectViewSet(viewsets.ModelViewSet):
         subject.save(update_fields=['status'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        summary='Відновити предмет з архіву',
+        request=None,
+        responses={200: SubjectSerializer, 400: None},
+    )
     @action(detail=True, methods=['post'])
     def restore(self, request, pk=None):
         """
@@ -271,6 +282,11 @@ class GroupViewSet(viewsets.ModelViewSet):
         group.save(update_fields=['status'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        summary='Активувати групу',
+        request=None,
+        responses={200: GroupSerializer, 400: None},
+    )
     @action(detail=True, methods=['post'])
     def activate(self, request, pk=None):
         """
@@ -400,6 +416,11 @@ class LessonViewSet(viewsets.ModelViewSet):
         lesson.save(update_fields=['status'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        summary='Завершити заняття (scheduled → completed)',
+        request=None,
+        responses={200: LessonSerializer, 400: None},
+    )
     @action(detail=True, methods=['post'])
     def complete(self, request, pk=None):
         """
@@ -427,6 +448,50 @@ class LessonViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(lesson)
         return Response(serializer.data)
 
+    @extend_schema(
+        summary='Масова відмітка відвідуваності для заняття',
+        description=(
+            'Створює або оновлює записи відвідуваності для вказаних студентів. '
+            'Викладач може відмічати лише на своїх заняттях.'
+        ),
+        request=inline_serializer(
+            name='MarkAttendanceRequest',
+            fields={
+                'records': drf_serializers.ListField(
+                    child=inline_serializer(
+                        name='AttendanceRecord',
+                        fields={
+                            'student': drf_serializers.IntegerField(help_text='ID студента'),
+                            'status': drf_serializers.ChoiceField(
+                                choices=Attendance.Status.choices,
+                                default='present',
+                                help_text='present / absent / late',
+                            ),
+                            'note': drf_serializers.CharField(
+                                required=False,
+                                default='',
+                                help_text='Примітка (необов\'язково)',
+                            ),
+                        },
+                    ),
+                    help_text='Список записів відвідуваності',
+                ),
+            },
+        ),
+        responses={
+            200: inline_serializer(
+                name='MarkAttendanceResponse',
+                fields={
+                    'created': AttendanceSerializer(many=True),
+                    'updated': AttendanceSerializer(many=True),
+                    'errors': drf_serializers.ListField(
+                        child=drf_serializers.DictField(),
+                    ),
+                },
+            ),
+            400: None,
+        },
+    )
     @action(
         detail=True,
         methods=['post'],

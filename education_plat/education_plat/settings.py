@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'corsheaders',
+    'drf_spectacular',
 
     'users',
     'branches',
@@ -147,6 +148,7 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
@@ -163,4 +165,36 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Education Platform — Phase 2 API',
+    'DESCRIPTION': (
+        'REST API для управління філіями, предметами, групами, '
+        'абонементами, заняттями та відвідуваністю. '
+        'Авторизація через JWT (Bearer token).'
+    ),
+    'VERSION': '2.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SECURITY': [{'BearerAuth': []}],
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
+    },
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'BearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            },
+        },
+    },
+    'ENUM_NAME_OVERRIDES': {
+        'ActiveArchivedStatusEnum': 'branches.models.Branch.Status',
+        'GroupStatusEnum': 'branches.models.Group.Status',
+        'LessonStatusEnum': 'branches.models.Lesson.Status',
+        'AttendanceStatusEnum': 'branches.models.Attendance.Status',
+        'UserRoleEnum': 'users.models.CustomUser.Role',
+    },
 }
