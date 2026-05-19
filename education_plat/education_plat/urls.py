@@ -8,12 +8,12 @@ urlpatterns = [
     path('', include('branches.urls')),
     path('', include('students.urls')),
 
+    # API Documentation (Swagger / OpenAPI)
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+
     # API
     path('api/', include('branches.api_urls')),
     path('api/', include('users.api_urls')),
     path('api/', include('students.api_urls')),
-
-    # API Documentation (Swagger / OpenAPI)
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]

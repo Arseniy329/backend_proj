@@ -1,0 +1,3390 @@
+openapi: 3.0.3
+info:
+  title: Education Platform — Phase 2 API
+  version: 2.0.0
+  description: REST API для управління філіями, предметами, групами, абонементами,
+    заняттями та відвідуваністю. Авторизація через JWT (Bearer token).
+paths:
+  /api/attendances/:
+    get:
+      operationId: attendances_list
+      description: |-
+        ViewSet для CRUD-операцій з відвідуваністю (Attendance).
+
+        - GET    /api/attendances/              — список записів відвідуваності
+        - POST   /api/attendances/              — створити запис
+        - GET    /api/attendances/{id}/         — деталі запису
+        - PUT    /api/attendances/{id}/         — повне оновлення
+        - PATCH  /api/attendances/{id}/         — часткове оновлення (напр. зміна статусу)
+        - DELETE /api/attendances/{id}/         — видалити запис
+
+        Фільтрація (query params):
+        - ?lesson=1          — за заняттям
+        - ?student=2         — за студентом
+        - ?status=present    — за статусом
+      parameters:
+      - in: query
+        name: lesson
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: Статус
+          enum:
+          - absent
+          - late
+          - present
+        description: |-
+          * `present` - Присутній
+          * `absent` - Відсутній
+          * `late` - Запізнився
+      - in: query
+        name: student
+        schema:
+          type: integer
+      tags:
+      - attendances
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendance'
+          description: ''
+    post:
+      operationId: attendances_create
+      description: |-
+        ViewSet для CRUD-операцій з відвідуваністю (Attendance).
+
+        - GET    /api/attendances/              — список записів відвідуваності
+        - POST   /api/attendances/              — створити запис
+        - GET    /api/attendances/{id}/         — деталі запису
+        - PUT    /api/attendances/{id}/         — повне оновлення
+        - PATCH  /api/attendances/{id}/         — часткове оновлення (напр. зміна статусу)
+        - DELETE /api/attendances/{id}/         — видалити запис
+
+        Фільтрація (query params):
+        - ?lesson=1          — за заняттям
+        - ?student=2         — за студентом
+        - ?status=present    — за статусом
+      tags:
+      - attendances
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AttendanceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AttendanceRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+  /api/attendances/{id}/:
+    get:
+      operationId: attendances_retrieve
+      description: |-
+        ViewSet для CRUD-операцій з відвідуваністю (Attendance).
+
+        - GET    /api/attendances/              — список записів відвідуваності
+        - POST   /api/attendances/              — створити запис
+        - GET    /api/attendances/{id}/         — деталі запису
+        - PUT    /api/attendances/{id}/         — повне оновлення
+        - PATCH  /api/attendances/{id}/         — часткове оновлення (напр. зміна статусу)
+        - DELETE /api/attendances/{id}/         — видалити запис
+
+        Фільтрація (query params):
+        - ?lesson=1          — за заняттям
+        - ?student=2         — за студентом
+        - ?status=present    — за статусом
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Відвідування.
+        required: true
+      tags:
+      - attendances
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    put:
+      operationId: attendances_update
+      description: |-
+        ViewSet для CRUD-операцій з відвідуваністю (Attendance).
+
+        - GET    /api/attendances/              — список записів відвідуваності
+        - POST   /api/attendances/              — створити запис
+        - GET    /api/attendances/{id}/         — деталі запису
+        - PUT    /api/attendances/{id}/         — повне оновлення
+        - PATCH  /api/attendances/{id}/         — часткове оновлення (напр. зміна статусу)
+        - DELETE /api/attendances/{id}/         — видалити запис
+
+        Фільтрація (query params):
+        - ?lesson=1          — за заняттям
+        - ?student=2         — за студентом
+        - ?status=present    — за статусом
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Відвідування.
+        required: true
+      tags:
+      - attendances
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AttendanceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AttendanceRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    patch:
+      operationId: attendances_partial_update
+      description: |-
+        ViewSet для CRUD-операцій з відвідуваністю (Attendance).
+
+        - GET    /api/attendances/              — список записів відвідуваності
+        - POST   /api/attendances/              — створити запис
+        - GET    /api/attendances/{id}/         — деталі запису
+        - PUT    /api/attendances/{id}/         — повне оновлення
+        - PATCH  /api/attendances/{id}/         — часткове оновлення (напр. зміна статусу)
+        - DELETE /api/attendances/{id}/         — видалити запис
+
+        Фільтрація (query params):
+        - ?lesson=1          — за заняттям
+        - ?student=2         — за студентом
+        - ?status=present    — за статусом
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Відвідування.
+        required: true
+      tags:
+      - attendances
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendanceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendanceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendanceRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    delete:
+      operationId: attendances_destroy
+      description: |-
+        ViewSet для CRUD-операцій з відвідуваністю (Attendance).
+
+        - GET    /api/attendances/              — список записів відвідуваності
+        - POST   /api/attendances/              — створити запис
+        - GET    /api/attendances/{id}/         — деталі запису
+        - PUT    /api/attendances/{id}/         — повне оновлення
+        - PATCH  /api/attendances/{id}/         — часткове оновлення (напр. зміна статусу)
+        - DELETE /api/attendances/{id}/         — видалити запис
+
+        Фільтрація (query params):
+        - ?lesson=1          — за заняттям
+        - ?student=2         — за студентом
+        - ?status=present    — за статусом
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Відвідування.
+        required: true
+      tags:
+      - attendances
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: |-
+        Вхід користувача за номером телефону та паролем.
+
+        POST /api/auth/login/
+        Body: { "phone": "+380991234567", "password": "secret" }
+
+        Відповідь:
+        {
+            "access": "<access-token>",
+            "refresh": "<refresh-token>",
+            "user": { "id", "phone", "full_name", "role" }
+        }
+
+        Безпека:
+        - Неактивні (архівовані) користувачі отримують зрозуміле повідомлення.
+        - При невірних реквізитах — уніфікована помилка (не розкриваємо деталі).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhoneLoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PhoneLoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PhoneLoginRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhoneLogin'
+          description: ''
+  /api/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logout'
+          description: ''
+  /api/auth/refresh/:
+    post:
+      operationId: auth_refresh_create
+      description: |-
+        Оновлення access-токена за допомогою refresh-токена.
+
+        POST /api/auth/refresh/
+        Body: { "refresh": "<refresh-token>" }
+
+        Відповідь: { "access": "<новий-access>", "refresh": "<новий-refresh>" }
+
+        Ротація:
+        - Після кожного запиту старий refresh-токен анулюється (blacklist).
+        - Видається новий refresh-токен (одноразове використання).
+        - Налаштовується через SIMPLE_JWT: ROTATE_REFRESH_TOKENS=True,
+          BLACKLIST_AFTER_ROTATION=True.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/branches/:
+    get:
+      operationId: branches_list
+      description: |-
+        ViewSet для CRUD-операцій з філіями (Branch).
+
+        - GET    /api/branches/          — список активних філій (адміни бачать усі)
+        - POST   /api/branches/          — створити нову філію
+        - GET    /api/branches/{id}/     — деталі філії
+        - PUT    /api/branches/{id}/     — повне оновлення
+        - PATCH  /api/branches/{id}/     — часткове оновлення
+        - DELETE /api/branches/{id}/     — м'яке видалення (архівування)
+        - POST   /api/branches/{id}/restore/ — відновлення з архіву
+      parameters:
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - branches
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Branch'
+          description: ''
+    post:
+      operationId: branches_create
+      description: |-
+        ViewSet для CRUD-операцій з філіями (Branch).
+
+        - GET    /api/branches/          — список активних філій (адміни бачать усі)
+        - POST   /api/branches/          — створити нову філію
+        - GET    /api/branches/{id}/     — деталі філії
+        - PUT    /api/branches/{id}/     — повне оновлення
+        - PATCH  /api/branches/{id}/     — часткове оновлення
+        - DELETE /api/branches/{id}/     — м'яке видалення (архівування)
+        - POST   /api/branches/{id}/restore/ — відновлення з архіву
+      tags:
+      - branches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+  /api/branches/{id}/:
+    get:
+      operationId: branches_retrieve
+      description: |-
+        ViewSet для CRUD-операцій з філіями (Branch).
+
+        - GET    /api/branches/          — список активних філій (адміни бачать усі)
+        - POST   /api/branches/          — створити нову філію
+        - GET    /api/branches/{id}/     — деталі філії
+        - PUT    /api/branches/{id}/     — повне оновлення
+        - PATCH  /api/branches/{id}/     — часткове оновлення
+        - DELETE /api/branches/{id}/     — м'яке видалення (архівування)
+        - POST   /api/branches/{id}/restore/ — відновлення з архіву
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Гілка.
+        required: true
+      tags:
+      - branches
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    put:
+      operationId: branches_update
+      description: |-
+        ViewSet для CRUD-операцій з філіями (Branch).
+
+        - GET    /api/branches/          — список активних філій (адміни бачать усі)
+        - POST   /api/branches/          — створити нову філію
+        - GET    /api/branches/{id}/     — деталі філії
+        - PUT    /api/branches/{id}/     — повне оновлення
+        - PATCH  /api/branches/{id}/     — часткове оновлення
+        - DELETE /api/branches/{id}/     — м'яке видалення (архівування)
+        - POST   /api/branches/{id}/restore/ — відновлення з архіву
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Гілка.
+        required: true
+      tags:
+      - branches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    patch:
+      operationId: branches_partial_update
+      description: |-
+        ViewSet для CRUD-операцій з філіями (Branch).
+
+        - GET    /api/branches/          — список активних філій (адміни бачать усі)
+        - POST   /api/branches/          — створити нову філію
+        - GET    /api/branches/{id}/     — деталі філії
+        - PUT    /api/branches/{id}/     — повне оновлення
+        - PATCH  /api/branches/{id}/     — часткове оновлення
+        - DELETE /api/branches/{id}/     — м'яке видалення (архівування)
+        - POST   /api/branches/{id}/restore/ — відновлення з архіву
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Гілка.
+        required: true
+      tags:
+      - branches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    delete:
+      operationId: branches_destroy
+      description: |-
+        Soft delete (архівування) замість фізичного видалення.
+
+        Перед архівуванням перевіряє:
+        1. Чи є активні студенти, прикріплені до цієї філії.
+        2. Чи є заплановані (scheduled) заняття у групах цієї філії.
+
+        Якщо є — повертає HTTP 400 з описом проблеми.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Гілка.
+        required: true
+      tags:
+      - branches
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/branches/{id}/restore/:
+    post:
+      operationId: branches_restore_create
+      description: |-
+        Відновлення філії з архіву.
+        POST /api/branches/{id}/restore/
+      summary: Відновити філію з архіву
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Гілка.
+        required: true
+      tags:
+      - branches
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+        '400':
+          description: No response body
+  /api/groups/:
+    get:
+      operationId: groups_list
+      description: |-
+        ViewSet для CRUD-операцій з групами (Group).
+
+        - GET    /api/groups/              — список груп (з фільтрацією)
+        - POST   /api/groups/              — створити нову групу
+        - GET    /api/groups/{id}/         — деталі групи
+        - PUT    /api/groups/{id}/         — повне оновлення
+        - PATCH  /api/groups/{id}/         — часткове оновлення
+        - DELETE /api/groups/{id}/         — деактивація групи (status → inactive)
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?search=Група      — пошук за назвою
+      parameters:
+      - in: query
+        name: branch
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: Статус
+          enum:
+          - active
+          - inactive
+        description: |-
+          * `active` - Активна
+          * `inactive` - Неактивна
+      tags:
+      - groups
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+          description: ''
+    post:
+      operationId: groups_create
+      description: |-
+        ViewSet для CRUD-операцій з групами (Group).
+
+        - GET    /api/groups/              — список груп (з фільтрацією)
+        - POST   /api/groups/              — створити нову групу
+        - GET    /api/groups/{id}/         — деталі групи
+        - PUT    /api/groups/{id}/         — повне оновлення
+        - PATCH  /api/groups/{id}/         — часткове оновлення
+        - DELETE /api/groups/{id}/         — деактивація групи (status → inactive)
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?search=Група      — пошук за назвою
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/groups/{id}/:
+    get:
+      operationId: groups_retrieve
+      description: |-
+        ViewSet для CRUD-операцій з групами (Group).
+
+        - GET    /api/groups/              — список груп (з фільтрацією)
+        - POST   /api/groups/              — створити нову групу
+        - GET    /api/groups/{id}/         — деталі групи
+        - PUT    /api/groups/{id}/         — повне оновлення
+        - PATCH  /api/groups/{id}/         — часткове оновлення
+        - DELETE /api/groups/{id}/         — деактивація групи (status → inactive)
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?search=Група      — пошук за назвою
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Група.
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    put:
+      operationId: groups_update
+      description: |-
+        ViewSet для CRUD-операцій з групами (Group).
+
+        - GET    /api/groups/              — список груп (з фільтрацією)
+        - POST   /api/groups/              — створити нову групу
+        - GET    /api/groups/{id}/         — деталі групи
+        - PUT    /api/groups/{id}/         — повне оновлення
+        - PATCH  /api/groups/{id}/         — часткове оновлення
+        - DELETE /api/groups/{id}/         — деактивація групи (status → inactive)
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?search=Група      — пошук за назвою
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Група.
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    patch:
+      operationId: groups_partial_update
+      description: |-
+        ViewSet для CRUD-операцій з групами (Group).
+
+        - GET    /api/groups/              — список груп (з фільтрацією)
+        - POST   /api/groups/              — створити нову групу
+        - GET    /api/groups/{id}/         — деталі групи
+        - PUT    /api/groups/{id}/         — повне оновлення
+        - PATCH  /api/groups/{id}/         — часткове оновлення
+        - DELETE /api/groups/{id}/         — деактивація групи (status → inactive)
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?search=Група      — пошук за назвою
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Група.
+        required: true
+      tags:
+      - groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    delete:
+      operationId: groups_destroy
+      description: |-
+        Деактивація групи замість фізичного видалення.
+
+        Перед деактивацією перевіряє, чи є заплановані заняття
+        в цій групі. Якщо є — повертає HTTP 400.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Група.
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/groups/{id}/activate/:
+    post:
+      operationId: groups_activate_create
+      description: |-
+        Повторна активація групи.
+        POST /api/groups/{id}/activate/
+      summary: Активувати групу
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Група.
+        required: true
+      tags:
+      - groups
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+        '400':
+          description: No response body
+  /api/lessons/:
+    get:
+      operationId: lessons_list
+      description: |-
+        ViewSet для CRUD-операцій із заняттями (Lesson).
+
+        - GET    /api/lessons/                          — список занять (з фільтрацією)
+        - POST   /api/lessons/                          — створити нове заняття
+        - GET    /api/lessons/{id}/                     — деталі заняття
+        - PUT    /api/lessons/{id}/                     — повне оновлення
+        - PATCH  /api/lessons/{id}/                     — часткове оновлення
+        - DELETE /api/lessons/{id}/                     — скасувати заняття (status → cancelled)
+        - POST   /api/lessons/{id}/complete/            — завершити заняття (status → completed)
+        - POST   /api/lessons/{id}/mark_attendance/     — масова відмітка відвідуваності
+
+        Фільтрація (query params):
+        - ?group=1           — за групою
+        - ?teacher=2         — за викладачем
+        - ?status=scheduled  — за статусом
+        - ?date=2026-05-10   — за датою
+        - ?search=тема       — пошук за темою
+      parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: group
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: Статус
+          enum:
+          - cancelled
+          - completed
+          - scheduled
+        description: |-
+          * `scheduled` - Заплановано
+          * `completed` - Проведено
+          * `cancelled` - Скасовано
+      - in: query
+        name: teacher
+        schema:
+          type: integer
+      tags:
+      - lessons
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lesson'
+          description: ''
+    post:
+      operationId: lessons_create
+      description: |-
+        ViewSet для CRUD-операцій із заняттями (Lesson).
+
+        - GET    /api/lessons/                          — список занять (з фільтрацією)
+        - POST   /api/lessons/                          — створити нове заняття
+        - GET    /api/lessons/{id}/                     — деталі заняття
+        - PUT    /api/lessons/{id}/                     — повне оновлення
+        - PATCH  /api/lessons/{id}/                     — часткове оновлення
+        - DELETE /api/lessons/{id}/                     — скасувати заняття (status → cancelled)
+        - POST   /api/lessons/{id}/complete/            — завершити заняття (status → completed)
+        - POST   /api/lessons/{id}/mark_attendance/     — масова відмітка відвідуваності
+
+        Фільтрація (query params):
+        - ?group=1           — за групою
+        - ?teacher=2         — за викладачем
+        - ?status=scheduled  — за статусом
+        - ?date=2026-05-10   — за датою
+        - ?search=тема       — пошук за темою
+      tags:
+      - lessons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+  /api/lessons/{id}/:
+    get:
+      operationId: lessons_retrieve
+      description: |-
+        ViewSet для CRUD-операцій із заняттями (Lesson).
+
+        - GET    /api/lessons/                          — список занять (з фільтрацією)
+        - POST   /api/lessons/                          — створити нове заняття
+        - GET    /api/lessons/{id}/                     — деталі заняття
+        - PUT    /api/lessons/{id}/                     — повне оновлення
+        - PATCH  /api/lessons/{id}/                     — часткове оновлення
+        - DELETE /api/lessons/{id}/                     — скасувати заняття (status → cancelled)
+        - POST   /api/lessons/{id}/complete/            — завершити заняття (status → completed)
+        - POST   /api/lessons/{id}/mark_attendance/     — масова відмітка відвідуваності
+
+        Фільтрація (query params):
+        - ?group=1           — за групою
+        - ?teacher=2         — за викладачем
+        - ?status=scheduled  — за статусом
+        - ?date=2026-05-10   — за датою
+        - ?search=тема       — пошук за темою
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заняття.
+        required: true
+      tags:
+      - lessons
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    put:
+      operationId: lessons_update
+      description: |-
+        ViewSet для CRUD-операцій із заняттями (Lesson).
+
+        - GET    /api/lessons/                          — список занять (з фільтрацією)
+        - POST   /api/lessons/                          — створити нове заняття
+        - GET    /api/lessons/{id}/                     — деталі заняття
+        - PUT    /api/lessons/{id}/                     — повне оновлення
+        - PATCH  /api/lessons/{id}/                     — часткове оновлення
+        - DELETE /api/lessons/{id}/                     — скасувати заняття (status → cancelled)
+        - POST   /api/lessons/{id}/complete/            — завершити заняття (status → completed)
+        - POST   /api/lessons/{id}/mark_attendance/     — масова відмітка відвідуваності
+
+        Фільтрація (query params):
+        - ?group=1           — за групою
+        - ?teacher=2         — за викладачем
+        - ?status=scheduled  — за статусом
+        - ?date=2026-05-10   — за датою
+        - ?search=тема       — пошук за темою
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заняття.
+        required: true
+      tags:
+      - lessons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    patch:
+      operationId: lessons_partial_update
+      description: |-
+        ViewSet для CRUD-операцій із заняттями (Lesson).
+
+        - GET    /api/lessons/                          — список занять (з фільтрацією)
+        - POST   /api/lessons/                          — створити нове заняття
+        - GET    /api/lessons/{id}/                     — деталі заняття
+        - PUT    /api/lessons/{id}/                     — повне оновлення
+        - PATCH  /api/lessons/{id}/                     — часткове оновлення
+        - DELETE /api/lessons/{id}/                     — скасувати заняття (status → cancelled)
+        - POST   /api/lessons/{id}/complete/            — завершити заняття (status → completed)
+        - POST   /api/lessons/{id}/mark_attendance/     — масова відмітка відвідуваності
+
+        Фільтрація (query params):
+        - ?group=1           — за групою
+        - ?teacher=2         — за викладачем
+        - ?status=scheduled  — за статусом
+        - ?date=2026-05-10   — за датою
+        - ?search=тема       — пошук за темою
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заняття.
+        required: true
+      tags:
+      - lessons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    delete:
+      operationId: lessons_destroy
+      description: |-
+        Скасування заняття замість фізичного видалення.
+        Лише заплановане (scheduled) заняття можна скасувати.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заняття.
+        required: true
+      tags:
+      - lessons
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/lessons/{id}/complete/:
+    post:
+      operationId: lessons_complete_create
+      description: |-
+        Завершення заняття.
+        POST /api/lessons/{id}/complete/
+
+        Лише заплановане (scheduled) заняття можна завершити.
+      summary: Завершити заняття (scheduled → completed)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заняття.
+        required: true
+      tags:
+      - lessons
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+        '400':
+          description: No response body
+  /api/lessons/{id}/mark_attendance/:
+    post:
+      operationId: lessons_mark_attendance_create
+      description: Створює або оновлює записи відвідуваності для вказаних студентів.
+        Викладач може відмічати лише на своїх заняттях.
+      summary: Масова відмітка відвідуваності для заняття
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Заняття.
+        required: true
+      tags:
+      - lessons
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkAttendanceRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MarkAttendanceRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MarkAttendanceRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarkAttendanceResponse'
+          description: ''
+        '400':
+          description: No response body
+  /api/students/:
+    get:
+      operationId: students_list
+      description: |-
+        ViewSet для CRUD-операцій зі студентами (Student).
+
+        - GET    /api/students/              — список студентів (з фільтрацією та пошуком)
+        - POST   /api/students/              — створити нового студента
+        - GET    /api/students/{id}/         — деталі студента
+        - PUT    /api/students/{id}/         — повне оновлення
+        - PATCH  /api/students/{id}/         — часткове оновлення
+        - DELETE /api/students/{id}/         — м'яке видалення (архівування)
+        - POST   /api/students/{id}/restore/ — відновлення з архіву
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?group=3           — за групою
+        - ?search=Іван       — пошук за ім'ям або прізвищем
+      parameters:
+      - in: query
+        name: branch
+        schema:
+          type: integer
+      - in: query
+        name: group
+        schema:
+          type: integer
+        description: Група (ID)
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: Статус
+          enum:
+          - active
+          - archived
+        description: |-
+          * `active` - Активний
+          * `archived` - Архівований
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+          description: ''
+    post:
+      operationId: students_create
+      description: |-
+        ViewSet для CRUD-операцій зі студентами (Student).
+
+        - GET    /api/students/              — список студентів (з фільтрацією та пошуком)
+        - POST   /api/students/              — створити нового студента
+        - GET    /api/students/{id}/         — деталі студента
+        - PUT    /api/students/{id}/         — повне оновлення
+        - PATCH  /api/students/{id}/         — часткове оновлення
+        - DELETE /api/students/{id}/         — м'яке видалення (архівування)
+        - POST   /api/students/{id}/restore/ — відновлення з архіву
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?group=3           — за групою
+        - ?search=Іван       — пошук за ім'ям або прізвищем
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+  /api/students/{id}/:
+    get:
+      operationId: students_retrieve
+      description: |-
+        ViewSet для CRUD-операцій зі студентами (Student).
+
+        - GET    /api/students/              — список студентів (з фільтрацією та пошуком)
+        - POST   /api/students/              — створити нового студента
+        - GET    /api/students/{id}/         — деталі студента
+        - PUT    /api/students/{id}/         — повне оновлення
+        - PATCH  /api/students/{id}/         — часткове оновлення
+        - DELETE /api/students/{id}/         — м'яке видалення (архівування)
+        - POST   /api/students/{id}/restore/ — відновлення з архіву
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?group=3           — за групою
+        - ?search=Іван       — пошук за ім'ям або прізвищем
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Студент.
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+    put:
+      operationId: students_update
+      description: |-
+        ViewSet для CRUD-операцій зі студентами (Student).
+
+        - GET    /api/students/              — список студентів (з фільтрацією та пошуком)
+        - POST   /api/students/              — створити нового студента
+        - GET    /api/students/{id}/         — деталі студента
+        - PUT    /api/students/{id}/         — повне оновлення
+        - PATCH  /api/students/{id}/         — часткове оновлення
+        - DELETE /api/students/{id}/         — м'яке видалення (архівування)
+        - POST   /api/students/{id}/restore/ — відновлення з архіву
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?group=3           — за групою
+        - ?search=Іван       — пошук за ім'ям або прізвищем
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Студент.
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+    patch:
+      operationId: students_partial_update
+      description: |-
+        ViewSet для CRUD-операцій зі студентами (Student).
+
+        - GET    /api/students/              — список студентів (з фільтрацією та пошуком)
+        - POST   /api/students/              — створити нового студента
+        - GET    /api/students/{id}/         — деталі студента
+        - PUT    /api/students/{id}/         — повне оновлення
+        - PATCH  /api/students/{id}/         — часткове оновлення
+        - DELETE /api/students/{id}/         — м'яке видалення (архівування)
+        - POST   /api/students/{id}/restore/ — відновлення з архіву
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+        - ?status=active     — за статусом
+        - ?group=3           — за групою
+        - ?search=Іван       — пошук за ім'ям або прізвищем
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Студент.
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+    delete:
+      operationId: students_destroy
+      description: |-
+        Soft delete (архівування) замість фізичного видалення.
+
+        Заплановані заняття, в яких бере участь студент,
+        залишаються без змін у базі даних за правилами системи.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Студент.
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/students/{id}/restore/:
+    post:
+      operationId: students_restore_create
+      description: |-
+        Відновлення студента з архіву.
+        POST /api/students/{id}/restore/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Студент.
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+  /api/subjects/:
+    get:
+      operationId: subjects_list
+      description: |-
+        ViewSet для CRUD-операцій з предметами (Subject).
+
+        - GET    /api/subjects/              — список активних предметів
+        - POST   /api/subjects/              — створити новий предмет
+        - GET    /api/subjects/{id}/         — деталі предмета
+        - PUT    /api/subjects/{id}/         — повне оновлення
+        - PATCH  /api/subjects/{id}/         — часткове оновлення
+        - DELETE /api/subjects/{id}/         — м'яке видалення (архівування)
+        - POST   /api/subjects/{id}/restore/ — відновлення з архіву
+      parameters:
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - subjects
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+          description: ''
+    post:
+      operationId: subjects_create
+      description: |-
+        ViewSet для CRUD-операцій з предметами (Subject).
+
+        - GET    /api/subjects/              — список активних предметів
+        - POST   /api/subjects/              — створити новий предмет
+        - GET    /api/subjects/{id}/         — деталі предмета
+        - PUT    /api/subjects/{id}/         — повне оновлення
+        - PATCH  /api/subjects/{id}/         — часткове оновлення
+        - DELETE /api/subjects/{id}/         — м'яке видалення (архівування)
+        - POST   /api/subjects/{id}/restore/ — відновлення з архіву
+      tags:
+      - subjects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubjectRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubjectRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubjectRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+  /api/subjects/{id}/:
+    get:
+      operationId: subjects_retrieve
+      description: |-
+        ViewSet для CRUD-операцій з предметами (Subject).
+
+        - GET    /api/subjects/              — список активних предметів
+        - POST   /api/subjects/              — створити новий предмет
+        - GET    /api/subjects/{id}/         — деталі предмета
+        - PUT    /api/subjects/{id}/         — повне оновлення
+        - PATCH  /api/subjects/{id}/         — часткове оновлення
+        - DELETE /api/subjects/{id}/         — м'яке видалення (архівування)
+        - POST   /api/subjects/{id}/restore/ — відновлення з архіву
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Предмет.
+        required: true
+      tags:
+      - subjects
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+    put:
+      operationId: subjects_update
+      description: |-
+        ViewSet для CRUD-операцій з предметами (Subject).
+
+        - GET    /api/subjects/              — список активних предметів
+        - POST   /api/subjects/              — створити новий предмет
+        - GET    /api/subjects/{id}/         — деталі предмета
+        - PUT    /api/subjects/{id}/         — повне оновлення
+        - PATCH  /api/subjects/{id}/         — часткове оновлення
+        - DELETE /api/subjects/{id}/         — м'яке видалення (архівування)
+        - POST   /api/subjects/{id}/restore/ — відновлення з архіву
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Предмет.
+        required: true
+      tags:
+      - subjects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubjectRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubjectRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubjectRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+    patch:
+      operationId: subjects_partial_update
+      description: |-
+        ViewSet для CRUD-операцій з предметами (Subject).
+
+        - GET    /api/subjects/              — список активних предметів
+        - POST   /api/subjects/              — створити новий предмет
+        - GET    /api/subjects/{id}/         — деталі предмета
+        - PUT    /api/subjects/{id}/         — повне оновлення
+        - PATCH  /api/subjects/{id}/         — часткове оновлення
+        - DELETE /api/subjects/{id}/         — м'яке видалення (архівування)
+        - POST   /api/subjects/{id}/restore/ — відновлення з архіву
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Предмет.
+        required: true
+      tags:
+      - subjects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSubjectRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSubjectRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSubjectRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+    delete:
+      operationId: subjects_destroy
+      description: |-
+        Soft delete (архівування) замість фізичного видалення.
+
+        Перед архівуванням перевіряє, чи є заплановані заняття
+        з цим предметом. Якщо є — повертає HTTP 400.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Предмет.
+        required: true
+      tags:
+      - subjects
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/subjects/{id}/restore/:
+    post:
+      operationId: subjects_restore_create
+      description: |-
+        Відновлення предмета з архіву.
+        POST /api/subjects/{id}/restore/
+      summary: Відновити предмет з архіву
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Предмет.
+        required: true
+      tags:
+      - subjects
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+        '400':
+          description: No response body
+  /api/subscription-plans/:
+    get:
+      operationId: subscription_plans_list
+      description: |-
+        ViewSet для CRUD-операцій з абонементами (SubscriptionPlan).
+
+        - GET    /api/subscription-plans/          — список абонементів
+        - POST   /api/subscription-plans/          — створити новий абонемент
+        - GET    /api/subscription-plans/{id}/     — деталі абонемента
+        - PUT    /api/subscription-plans/{id}/     — повне оновлення
+        - PATCH  /api/subscription-plans/{id}/     — часткове оновлення
+        - DELETE /api/subscription-plans/{id}/     — видалити абонемент
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+      parameters:
+      - in: query
+        name: branch
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - subscription-plans
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionPlan'
+          description: ''
+    post:
+      operationId: subscription_plans_create
+      description: |-
+        ViewSet для CRUD-операцій з абонементами (SubscriptionPlan).
+
+        - GET    /api/subscription-plans/          — список абонементів
+        - POST   /api/subscription-plans/          — створити новий абонемент
+        - GET    /api/subscription-plans/{id}/     — деталі абонемента
+        - PUT    /api/subscription-plans/{id}/     — повне оновлення
+        - PATCH  /api/subscription-plans/{id}/     — часткове оновлення
+        - DELETE /api/subscription-plans/{id}/     — видалити абонемент
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+      tags:
+      - subscription-plans
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlanRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlanRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlanRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+          description: ''
+  /api/subscription-plans/{id}/:
+    get:
+      operationId: subscription_plans_retrieve
+      description: |-
+        ViewSet для CRUD-операцій з абонементами (SubscriptionPlan).
+
+        - GET    /api/subscription-plans/          — список абонементів
+        - POST   /api/subscription-plans/          — створити новий абонемент
+        - GET    /api/subscription-plans/{id}/     — деталі абонемента
+        - PUT    /api/subscription-plans/{id}/     — повне оновлення
+        - PATCH  /api/subscription-plans/{id}/     — часткове оновлення
+        - DELETE /api/subscription-plans/{id}/     — видалити абонемент
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Абонемент.
+        required: true
+      tags:
+      - subscription-plans
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+          description: ''
+    put:
+      operationId: subscription_plans_update
+      description: |-
+        ViewSet для CRUD-операцій з абонементами (SubscriptionPlan).
+
+        - GET    /api/subscription-plans/          — список абонементів
+        - POST   /api/subscription-plans/          — створити новий абонемент
+        - GET    /api/subscription-plans/{id}/     — деталі абонемента
+        - PUT    /api/subscription-plans/{id}/     — повне оновлення
+        - PATCH  /api/subscription-plans/{id}/     — часткове оновлення
+        - DELETE /api/subscription-plans/{id}/     — видалити абонемент
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Абонемент.
+        required: true
+      tags:
+      - subscription-plans
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlanRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlanRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubscriptionPlanRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+          description: ''
+    patch:
+      operationId: subscription_plans_partial_update
+      description: |-
+        ViewSet для CRUD-операцій з абонементами (SubscriptionPlan).
+
+        - GET    /api/subscription-plans/          — список абонементів
+        - POST   /api/subscription-plans/          — створити новий абонемент
+        - GET    /api/subscription-plans/{id}/     — деталі абонемента
+        - PUT    /api/subscription-plans/{id}/     — повне оновлення
+        - PATCH  /api/subscription-plans/{id}/     — часткове оновлення
+        - DELETE /api/subscription-plans/{id}/     — видалити абонемент
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Абонемент.
+        required: true
+      tags:
+      - subscription-plans
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscriptionPlanRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscriptionPlanRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscriptionPlanRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionPlan'
+          description: ''
+    delete:
+      operationId: subscription_plans_destroy
+      description: |-
+        ViewSet для CRUD-операцій з абонементами (SubscriptionPlan).
+
+        - GET    /api/subscription-plans/          — список абонементів
+        - POST   /api/subscription-plans/          — створити новий абонемент
+        - GET    /api/subscription-plans/{id}/     — деталі абонемента
+        - PUT    /api/subscription-plans/{id}/     — повне оновлення
+        - PATCH  /api/subscription-plans/{id}/     — часткове оновлення
+        - DELETE /api/subscription-plans/{id}/     — видалити абонемент
+
+        Фільтрація (query params):
+        - ?branch=1          — за філією
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Абонемент.
+        required: true
+      tags:
+      - subscription-plans
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/users/:
+    get:
+      operationId: users_list
+      description: |-
+        ViewSet для CRUD-операцій з користувачами (адміни та викладачі).
+
+        - GET    /api/users/          — список користувачів
+        - POST   /api/users/          — створити нового користувача
+        - GET    /api/users/{id}/     — деталі користувача
+        - PUT    /api/users/{id}/     — повне оновлення
+        - PATCH  /api/users/{id}/     — часткове оновлення
+        - DELETE /api/users/{id}/     — видалити користувача
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: role
+        schema:
+          type: string
+          title: Роль
+          enum:
+          - admin
+          - teacher
+        description: |-
+          * `admin` - Адміністратор
+          * `teacher` - Викладач
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomUser'
+          description: ''
+    post:
+      operationId: users_create
+      description: |-
+        ViewSet для CRUD-операцій з користувачами (адміни та викладачі).
+
+        - GET    /api/users/          — список користувачів
+        - POST   /api/users/          — створити нового користувача
+        - GET    /api/users/{id}/     — деталі користувача
+        - PUT    /api/users/{id}/     — повне оновлення
+        - PATCH  /api/users/{id}/     — часткове оновлення
+        - DELETE /api/users/{id}/     — видалити користувача
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUserCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomUserCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomUserCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUserCreate'
+          description: ''
+  /api/users/{id}/:
+    get:
+      operationId: users_retrieve
+      description: |-
+        ViewSet для CRUD-операцій з користувачами (адміни та викладачі).
+
+        - GET    /api/users/          — список користувачів
+        - POST   /api/users/          — створити нового користувача
+        - GET    /api/users/{id}/     — деталі користувача
+        - PUT    /api/users/{id}/     — повне оновлення
+        - PATCH  /api/users/{id}/     — часткове оновлення
+        - DELETE /api/users/{id}/     — видалити користувача
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Користувач.
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    put:
+      operationId: users_update
+      description: |-
+        ViewSet для CRUD-операцій з користувачами (адміни та викладачі).
+
+        - GET    /api/users/          — список користувачів
+        - POST   /api/users/          — створити нового користувача
+        - GET    /api/users/{id}/     — деталі користувача
+        - PUT    /api/users/{id}/     — повне оновлення
+        - PATCH  /api/users/{id}/     — часткове оновлення
+        - DELETE /api/users/{id}/     — видалити користувача
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Користувач.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomUserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    patch:
+      operationId: users_partial_update
+      description: |-
+        ViewSet для CRUD-операцій з користувачами (адміни та викладачі).
+
+        - GET    /api/users/          — список користувачів
+        - POST   /api/users/          — створити нового користувача
+        - GET    /api/users/{id}/     — деталі користувача
+        - PUT    /api/users/{id}/     — повне оновлення
+        - PATCH  /api/users/{id}/     — часткове оновлення
+        - DELETE /api/users/{id}/     — видалити користувача
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Користувач.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUserRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    delete:
+      operationId: users_destroy
+      description: |-
+        ViewSet для CRUD-операцій з користувачами (адміни та викладачі).
+
+        - GET    /api/users/          — список користувачів
+        - POST   /api/users/          — створити нового користувача
+        - GET    /api/users/{id}/     — деталі користувача
+        - PUT    /api/users/{id}/     — повне оновлення
+        - PATCH  /api/users/{id}/     — часткове оновлення
+        - DELETE /api/users/{id}/     — видалити користувача
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Користувач.
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    ActiveArchivedStatusEnum:
+      enum:
+      - active
+      - archived
+      type: string
+      description: |-
+        * `active` - Активна
+        * `archived` - Архівована
+    Attendance:
+      type: object
+      description: |-
+        Серіалізатор для відвідуваності.
+
+        Валідація:
+        - Студент повинен належати до групи заняття.
+        - Пара (lesson, student) унікальна (unique_together).
+        - Заняття не повинно бути скасоване.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        lesson:
+          type: integer
+          title: Заняття
+        student:
+          type: integer
+          title: Студент
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AttendanceStatusEnum'
+          title: Статус
+        note:
+          type: string
+          title: Примітка
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата створення
+      required:
+      - created_at
+      - id
+      - lesson
+      - student
+    AttendanceRecordRequest:
+      type: object
+      properties:
+        student:
+          type: integer
+          description: ID студента
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AttendanceStatusEnum'
+          default: present
+          description: |-
+            present / absent / late
+
+            * `present` - Присутній
+            * `absent` - Відсутній
+            * `late` - Запізнився
+        note:
+          type: string
+          minLength: 1
+          default: ''
+          description: Примітка (необов'язково)
+      required:
+      - student
+    AttendanceRequest:
+      type: object
+      description: |-
+        Серіалізатор для відвідуваності.
+
+        Валідація:
+        - Студент повинен належати до групи заняття.
+        - Пара (lesson, student) унікальна (unique_together).
+        - Заняття не повинно бути скасоване.
+      properties:
+        lesson:
+          type: integer
+          title: Заняття
+        student:
+          type: integer
+          title: Студент
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AttendanceStatusEnum'
+          title: Статус
+        note:
+          type: string
+          title: Примітка
+      required:
+      - lesson
+      - student
+    AttendanceStatusEnum:
+      enum:
+      - present
+      - absent
+      - late
+      type: string
+      description: |-
+        * `present` - Присутній
+        * `absent` - Відсутній
+        * `late` - Запізнився
+    Branch:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Назва
+          maxLength: 255
+        address:
+          type: string
+          title: Адреса
+          maxLength: 255
+        city:
+          type: string
+          title: Місто
+          maxLength: 100
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ActiveArchivedStatusEnum'
+          readOnly: true
+          title: Статус
+        is_archived:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата створення
+      required:
+      - address
+      - city
+      - created_at
+      - id
+      - is_archived
+      - name
+      - status
+    BranchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Назва
+          maxLength: 255
+        address:
+          type: string
+          minLength: 1
+          title: Адреса
+          maxLength: 255
+        city:
+          type: string
+          minLength: 1
+          title: Місто
+          maxLength: 100
+      required:
+      - address
+      - city
+      - name
+    CustomUser:
+      type: object
+      description: |-
+        Серіалізатор для адміністративних та викладацьких акаунтів.
+        Ідентифікація за номером телефону (не email).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        phone:
+          type: string
+          title: Номер телефону
+          description: Унікальний номер телефону — основний ідентифікатор користувача.
+          maxLength: 20
+        first_name:
+          type: string
+          title: Ім'я
+          maxLength: 150
+        last_name:
+          type: string
+          title: Прізвище
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/UserRoleEnum'
+          title: Роль
+        is_active:
+          type: boolean
+          title: Активний
+        is_staff:
+          type: boolean
+          title: Персонал
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата реєстрації
+      required:
+      - date_joined
+      - id
+      - phone
+    CustomUserCreate:
+      type: object
+      description: Серіалізатор для створення користувача (з паролем).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        phone:
+          type: string
+          title: Номер телефону
+          description: Унікальний номер телефону — основний ідентифікатор користувача.
+          maxLength: 20
+        first_name:
+          type: string
+          title: Ім'я
+          maxLength: 150
+        last_name:
+          type: string
+          title: Прізвище
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/UserRoleEnum'
+          title: Роль
+        is_active:
+          type: boolean
+          title: Активний
+        is_staff:
+          type: boolean
+          title: Персонал
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата реєстрації
+      required:
+      - date_joined
+      - id
+      - phone
+    CustomUserCreateRequest:
+      type: object
+      description: Серіалізатор для створення користувача (з паролем).
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          title: Номер телефону
+          description: Унікальний номер телефону — основний ідентифікатор користувача.
+          maxLength: 20
+        first_name:
+          type: string
+          title: Ім'я
+          maxLength: 150
+        last_name:
+          type: string
+          title: Прізвище
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/UserRoleEnum'
+          title: Роль
+        is_active:
+          type: boolean
+          title: Активний
+        is_staff:
+          type: boolean
+          title: Персонал
+        password:
+          type: string
+          writeOnly: true
+          minLength: 6
+      required:
+      - password
+      - phone
+    CustomUserRequest:
+      type: object
+      description: |-
+        Серіалізатор для адміністративних та викладацьких акаунтів.
+        Ідентифікація за номером телефону (не email).
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          title: Номер телефону
+          description: Унікальний номер телефону — основний ідентифікатор користувача.
+          maxLength: 20
+        first_name:
+          type: string
+          title: Ім'я
+          maxLength: 150
+        last_name:
+          type: string
+          title: Прізвище
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/UserRoleEnum'
+          title: Роль
+        is_active:
+          type: boolean
+          title: Активний
+        is_staff:
+          type: boolean
+          title: Персонал
+      required:
+      - phone
+    Group:
+      type: object
+      description: |-
+        Серіалізатор для груп.
+
+        M2M-зв'язки (subjects, students) передаються як списки ID.
+        Валідація:
+        - Назва групи унікальна в межах однієї філії (серед активних груп).
+        - Філія повинна бути активною.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Назва
+          maxLength: 255
+        branch:
+          type: integer
+          title: Гілка
+        subjects:
+          type: array
+          items:
+            type: integer
+        students:
+          type: array
+          items:
+            type: integer
+        status:
+          allOf:
+          - $ref: '#/components/schemas/GroupStatusEnum'
+          title: Статус
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата створення
+      required:
+      - branch
+      - created_at
+      - id
+      - name
+    GroupRequest:
+      type: object
+      description: |-
+        Серіалізатор для груп.
+
+        M2M-зв'язки (subjects, students) передаються як списки ID.
+        Валідація:
+        - Назва групи унікальна в межах однієї філії (серед активних груп).
+        - Філія повинна бути активною.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Назва
+          maxLength: 255
+        branch:
+          type: integer
+          title: Гілка
+        subjects:
+          type: array
+          items:
+            type: integer
+        students:
+          type: array
+          items:
+            type: integer
+        status:
+          allOf:
+          - $ref: '#/components/schemas/GroupStatusEnum'
+          title: Статус
+      required:
+      - branch
+      - name
+    GroupStatusEnum:
+      enum:
+      - active
+      - inactive
+      type: string
+      description: |-
+        * `active` - Активна
+        * `inactive` - Неактивна
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        group:
+          type: integer
+          title: Група
+        subject:
+          type: integer
+          nullable: true
+          title: Предмет
+        teacher:
+          type: integer
+          nullable: true
+          title: Викладач
+        date:
+          type: string
+          format: date
+          title: Дата
+        start_time:
+          type: string
+          format: time
+          title: Час початку
+        end_time:
+          type: string
+          format: time
+          title: Час закінчення
+        topic:
+          type: string
+          title: Тема
+          maxLength: 255
+        room:
+          type: string
+          title: Аудиторія/кімната
+          description: Номер аудиторії або назва кімнати
+          maxLength: 50
+        notes:
+          type: string
+          title: Нотатки
+        status:
+          allOf:
+          - $ref: '#/components/schemas/LessonStatusEnum'
+          title: Статус
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата створення
+      required:
+      - created_at
+      - date
+      - end_time
+      - group
+      - id
+      - start_time
+    LessonRequest:
+      type: object
+      properties:
+        group:
+          type: integer
+          title: Група
+        subject:
+          type: integer
+          nullable: true
+          title: Предмет
+        teacher:
+          type: integer
+          nullable: true
+          title: Викладач
+        date:
+          type: string
+          format: date
+          title: Дата
+        start_time:
+          type: string
+          format: time
+          title: Час початку
+        end_time:
+          type: string
+          format: time
+          title: Час закінчення
+        topic:
+          type: string
+          title: Тема
+          maxLength: 255
+        room:
+          type: string
+          title: Аудиторія/кімната
+          description: Номер аудиторії або назва кімнати
+          maxLength: 50
+        notes:
+          type: string
+          title: Нотатки
+        status:
+          allOf:
+          - $ref: '#/components/schemas/LessonStatusEnum'
+          title: Статус
+      required:
+      - date
+      - end_time
+      - group
+      - start_time
+    LessonStatusEnum:
+      enum:
+      - scheduled
+      - completed
+      - cancelled
+      type: string
+      description: |-
+        * `scheduled` - Заплановано
+        * `completed` - Проведено
+        * `cancelled` - Скасовано
+    Logout:
+      type: object
+      properties:
+        refresh:
+          type: string
+          description: Refresh-токен, який потрібно анулювати.
+      required:
+      - refresh
+    LogoutRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+          description: Refresh-токен, який потрібно анулювати.
+      required:
+      - refresh
+    MarkAttendanceRequestRequest:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttendanceRecordRequest'
+          description: Список записів відвідуваності
+      required:
+      - records
+    MarkAttendanceResponse:
+      type: object
+      properties:
+        created:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attendance'
+        updated:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attendance'
+        errors:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - created
+      - errors
+      - updated
+    PatchedAttendanceRequest:
+      type: object
+      description: |-
+        Серіалізатор для відвідуваності.
+
+        Валідація:
+        - Студент повинен належати до групи заняття.
+        - Пара (lesson, student) унікальна (unique_together).
+        - Заняття не повинно бути скасоване.
+      properties:
+        lesson:
+          type: integer
+          title: Заняття
+        student:
+          type: integer
+          title: Студент
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AttendanceStatusEnum'
+          title: Статус
+        note:
+          type: string
+          title: Примітка
+    PatchedBranchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Назва
+          maxLength: 255
+        address:
+          type: string
+          minLength: 1
+          title: Адреса
+          maxLength: 255
+        city:
+          type: string
+          minLength: 1
+          title: Місто
+          maxLength: 100
+    PatchedCustomUserRequest:
+      type: object
+      description: |-
+        Серіалізатор для адміністративних та викладацьких акаунтів.
+        Ідентифікація за номером телефону (не email).
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          title: Номер телефону
+          description: Унікальний номер телефону — основний ідентифікатор користувача.
+          maxLength: 20
+        first_name:
+          type: string
+          title: Ім'я
+          maxLength: 150
+        last_name:
+          type: string
+          title: Прізвище
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/UserRoleEnum'
+          title: Роль
+        is_active:
+          type: boolean
+          title: Активний
+        is_staff:
+          type: boolean
+          title: Персонал
+    PatchedGroupRequest:
+      type: object
+      description: |-
+        Серіалізатор для груп.
+
+        M2M-зв'язки (subjects, students) передаються як списки ID.
+        Валідація:
+        - Назва групи унікальна в межах однієї філії (серед активних груп).
+        - Філія повинна бути активною.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Назва
+          maxLength: 255
+        branch:
+          type: integer
+          title: Гілка
+        subjects:
+          type: array
+          items:
+            type: integer
+        students:
+          type: array
+          items:
+            type: integer
+        status:
+          allOf:
+          - $ref: '#/components/schemas/GroupStatusEnum'
+          title: Статус
+    PatchedLessonRequest:
+      type: object
+      properties:
+        group:
+          type: integer
+          title: Група
+        subject:
+          type: integer
+          nullable: true
+          title: Предмет
+        teacher:
+          type: integer
+          nullable: true
+          title: Викладач
+        date:
+          type: string
+          format: date
+          title: Дата
+        start_time:
+          type: string
+          format: time
+          title: Час початку
+        end_time:
+          type: string
+          format: time
+          title: Час закінчення
+        topic:
+          type: string
+          title: Тема
+          maxLength: 255
+        room:
+          type: string
+          title: Аудиторія/кімната
+          description: Номер аудиторії або назва кімнати
+          maxLength: 50
+        notes:
+          type: string
+          title: Нотатки
+        status:
+          allOf:
+          - $ref: '#/components/schemas/LessonStatusEnum'
+          title: Статус
+    PatchedStudentRequest:
+      type: object
+      description: |-
+        Серіалізатор для студентів з усіма обов'язковими полями профілю:
+        персональні дані, контактна інформація, дані батьків/опікунів,
+        прикріплена філія, статус.
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          title: Ім'я
+          maxLength: 150
+        last_name:
+          type: string
+          minLength: 1
+          title: Прізвище
+          maxLength: 150
+        phone:
+          type: string
+          title: Телефон
+          maxLength: 20
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          title: Дата народження
+        parent_name:
+          type: string
+          title: ПІБ батьків
+          maxLength: 255
+        parent_phone:
+          type: string
+          title: Телефон батьків
+          maxLength: 20
+        parent_email:
+          type: string
+          format: email
+          title: Email батьків
+          maxLength: 254
+        branch:
+          type: integer
+          nullable: true
+          title: Гілка
+    PatchedSubjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Назва
+          maxLength: 255
+        description:
+          type: string
+          title: Опис
+        branches:
+          type: array
+          items:
+            type: integer
+    PatchedSubscriptionPlanRequest:
+      type: object
+      description: |-
+        Серіалізатор для абонементних планів.
+
+        Валідація:
+        - Ціна > 0.
+        - Кількість занять > 0.
+        - Тривалість > 0 днів.
+        - Філія повинна бути активною.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Назва
+          maxLength: 255
+        lessons_count:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Кількість занять
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          title: Ціна
+        duration_days:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Тривалість (днів)
+        branch:
+          type: integer
+          title: Гілка
+    PhoneLogin:
+      type: object
+      properties:
+        phone:
+          type: string
+          title: Номер телефону
+          description: Номер телефону у форматі +380XXXXXXXXX
+      required:
+      - phone
+    PhoneLoginRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          title: Номер телефону
+          description: Номер телефону у форматі +380XXXXXXXXX
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          title: Пароль
+      required:
+      - password
+      - phone
+    Status973Enum:
+      enum:
+      - active
+      - archived
+      type: string
+      description: |-
+        * `active` - Активний
+        * `archived` - Архівований
+    Student:
+      type: object
+      description: |-
+        Серіалізатор для студентів з усіма обов'язковими полями профілю:
+        персональні дані, контактна інформація, дані батьків/опікунів,
+        прикріплена філія, статус.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          title: Ім'я
+          maxLength: 150
+        last_name:
+          type: string
+          title: Прізвище
+          maxLength: 150
+        phone:
+          type: string
+          title: Телефон
+          maxLength: 20
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          title: Дата народження
+        parent_name:
+          type: string
+          title: ПІБ батьків
+          maxLength: 255
+        parent_phone:
+          type: string
+          title: Телефон батьків
+          maxLength: 20
+        parent_email:
+          type: string
+          format: email
+          title: Email батьків
+          maxLength: 254
+        branch:
+          type: integer
+          nullable: true
+          title: Гілка
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status973Enum'
+          readOnly: true
+          title: Статус
+        is_archived:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата створення
+      required:
+      - created_at
+      - first_name
+      - id
+      - is_archived
+      - last_name
+      - status
+    StudentRequest:
+      type: object
+      description: |-
+        Серіалізатор для студентів з усіма обов'язковими полями профілю:
+        персональні дані, контактна інформація, дані батьків/опікунів,
+        прикріплена філія, статус.
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          title: Ім'я
+          maxLength: 150
+        last_name:
+          type: string
+          minLength: 1
+          title: Прізвище
+          maxLength: 150
+        phone:
+          type: string
+          title: Телефон
+          maxLength: 20
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          title: Дата народження
+        parent_name:
+          type: string
+          title: ПІБ батьків
+          maxLength: 255
+        parent_phone:
+          type: string
+          title: Телефон батьків
+          maxLength: 20
+        parent_email:
+          type: string
+          format: email
+          title: Email батьків
+          maxLength: 254
+        branch:
+          type: integer
+          nullable: true
+          title: Гілка
+      required:
+      - first_name
+      - last_name
+    Subject:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Назва
+          maxLength: 255
+        description:
+          type: string
+          title: Опис
+        status:
+          allOf:
+          - $ref: '#/components/schemas/Status973Enum'
+          readOnly: true
+          title: Статус
+        branches:
+          type: array
+          items:
+            type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата створення
+      required:
+      - created_at
+      - id
+      - name
+      - status
+    SubjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Назва
+          maxLength: 255
+        description:
+          type: string
+          title: Опис
+        branches:
+          type: array
+          items:
+            type: integer
+      required:
+      - name
+    SubscriptionPlan:
+      type: object
+      description: |-
+        Серіалізатор для абонементних планів.
+
+        Валідація:
+        - Ціна > 0.
+        - Кількість занять > 0.
+        - Тривалість > 0 днів.
+        - Філія повинна бути активною.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Назва
+          maxLength: 255
+        lessons_count:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Кількість занять
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          title: Ціна
+        duration_days:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Тривалість (днів)
+        branch:
+          type: integer
+          title: Гілка
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата створення
+      required:
+      - branch
+      - created_at
+      - id
+      - lessons_count
+      - name
+      - price
+    SubscriptionPlanRequest:
+      type: object
+      description: |-
+        Серіалізатор для абонементних планів.
+
+        Валідація:
+        - Ціна > 0.
+        - Кількість занять > 0.
+        - Тривалість > 0 днів.
+        - Філія повинна бути активною.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Назва
+          maxLength: 255
+        lessons_count:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Кількість занять
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          title: Ціна
+        duration_days:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Тривалість (днів)
+        branch:
+          type: integer
+          title: Гілка
+      required:
+      - branch
+      - lessons_count
+      - name
+      - price
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    UserRoleEnum:
+      enum:
+      - admin
+      - teacher
+      type: string
+      description: |-
+        * `admin` - Адміністратор
+        * `teacher` - Викладач
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

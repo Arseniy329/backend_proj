@@ -1,10 +1,10 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import SimpleRouter
 
 from .api_views import CustomUserViewSet
 from .auth_views import PhoneLoginView, TokenRefreshView, LogoutView
 
-router = DefaultRouter()
+router = SimpleRouter()
 router.register(r'users', CustomUserViewSet, basename='user')
 
 urlpatterns = [

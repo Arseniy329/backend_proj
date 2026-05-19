@@ -1,10 +1,13 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="uk">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Education Platform{% endblock %}</title>
+    <script src="{% static 'js/apiService.js' %}" defer></script>
+    {% block extra_head %}{% endblock %}
 
 </head>
 
