@@ -1,0 +1,23 @@
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  border-radius: 2px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  background-color: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+.active    { background-color: var(--chip-active-bg);    color: var(--chip-active-text); }
+.inactive  { background-color: var(--chip-inactive-bg);  color: var(--chip-inactive-text); }
+.archived  { background-color: var(--chip-inactive-bg);  color: var(--chip-inactive-text); }
+.scheduled { background-color: var(--chip-scheduled-bg); color: var(--chip-scheduled-text); }
+.completed { background-color: var(--chip-completed-bg); color: var(--chip-completed-text); }
+.cancelled { background-color: var(--chip-cancelled-bg); color: var(--chip-cancelled-text); }
+.present   { background-color: var(--chip-present-bg);   color: var(--chip-present-text); }
+.absent    { background-color: var(--chip-absent-bg);    color: var(--chip-absent-text); }
+.late      { background-color: var(--chip-late-bg);      color: var(--chip-late-text); }
+.admin     { background-color: var(--chip-admin-bg);     color: var(--chip-admin-text); }
+.teacher   { background-color: var(--chip-scheduled-bg); color: var(--chip-scheduled-text); }

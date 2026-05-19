@@ -1,0 +1,6 @@
+.form  { display: flex; flex-direction: column; gap: 14px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.error { font-size: 13px; color: var(--danger-text); padding: 8px 10px; background: var(--danger-bg); border: 1px solid #3a1818; border-radius: var(--radius); }
+.actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; }
+
+@media (max-width: 520px) { .grid2 { grid-template-columns: 1fr; } }

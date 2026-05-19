@@ -1,0 +1,2 @@
+.error   { font-size: 13px; color: var(--danger-text); margin-bottom: 16px; }
+.loading { font-size: 13px; color: var(--text-muted); }

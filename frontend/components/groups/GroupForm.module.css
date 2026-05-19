@@ -1,0 +1,3 @@
+.form { display: flex; flex-direction: column; gap: 14px; }
+.error { font-size: 13px; color: var(--danger-text); padding: 8px 10px; background: var(--danger-bg); border: 1px solid #3a1818; border-radius: var(--radius); }
+.actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; }

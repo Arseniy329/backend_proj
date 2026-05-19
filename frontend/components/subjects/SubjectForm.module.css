@@ -1,0 +1,16 @@
+.form     { display: flex; flex-direction: column; gap: 14px; }
+.field    { display: flex; flex-direction: column; gap: 5px; }
+.label    { font-size: 12px; font-weight: var(--fw-medium); color: var(--text-secondary); }
+.textarea {
+  padding: 8px 10px;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+}
+.textarea:focus { border-color: var(--border-focus); }
+.error    { font-size: 13px; color: var(--danger-text); padding: 8px 10px; background: var(--danger-bg); border: 1px solid #3a1818; border-radius: var(--radius); }
+.actions  { display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; }

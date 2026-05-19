@@ -1,0 +1,36 @@
+.card {
+  width: 100%;
+  max-width: 380px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+}
+
+.heading {
+  font-size: 22px;
+  font-weight: var(--fw-semi);
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.serverError {
+  font-size: 13px;
+  color: var(--danger-text);
+  background-color: var(--danger-bg);
+  border: 1px solid #3a1818;
+  border-radius: var(--radius);
+  padding: 8px 10px;
+}

@@ -1,0 +1,24 @@
+.heading { font-size: 22px; font-weight: var(--fw-semi); margin-bottom: 6px; }
+.welcome { font-size: 14px; color: var(--text-secondary); margin-bottom: 32px; }
+.welcome strong { color: var(--text-primary); font-weight: var(--fw-medium); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.card:hover { border-color: var(--border-focus); }
+
+.cardLabel { font-size: 14px; color: var(--text-primary); }
+.cardArrow { font-size: 14px; color: var(--text-muted); }

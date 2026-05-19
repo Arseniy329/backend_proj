@@ -1,0 +1,56 @@
+/* ============================================================
+   UserList — flat dark-mode table, zero animations
+   ============================================================ */
+
+.tableWrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+/* Column headers */
+.th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #444444;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #1e1e1e;
+  white-space: nowrap;
+}
+
+/* Data rows — instant background change on hover, no transition */
+.tr:hover .td {
+  background-color: #161616;
+}
+
+.td {
+  padding: 10px 12px;
+  color: #cccccc;
+  border-bottom: 1px solid #1a1a1a;
+  vertical-align: middle;
+  background-color: transparent;
+}
+
+/* Action buttons — right-aligned, flex row */
+.rowActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* Empty state */
+.empty {
+  padding: 32px 0;
+  text-align: center;
+  font-size: 13px;
+  color: #444444;
+}
