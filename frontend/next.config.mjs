@@ -10,4 +10,6 @@ const nextConfig = {
   },
 };
 
+nextConfig.trailingSlash = true;
+
 export default nextConfig;

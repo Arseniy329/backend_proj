@@ -12,4 +12,7 @@ urlpatterns = [
     path('auth/login/', PhoneLoginView.as_view(), name='token_obtain'),
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/logout/', LogoutView.as_view(), name='token_logout'),
+    path('auth/login', PhoneLoginView.as_view()),
+    path('auth/refresh', TokenRefreshView.as_view()),
+    path('auth/logout', LogoutView.as_view()),
 ]

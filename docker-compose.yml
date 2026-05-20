@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./education_plat # шлях до папки з Dockerfile бекенду
+    ports:
+      - "8000:8000" # прокидаємо порт порт_хоста:порт_контейнера
+    volumes:
+      - ./education_plat:/app # монтуємо папку, щоб зміни в коді на комп'ютері відразу з'являлися в контейнері
+    environment:
+      - DEBUG=1
+
+  frontend:
+    build: ./frontend # шлях до папки з Dockerfile Next.js
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend # фронтенд почекає, поки запуститься бекенд
+      - /app/.next
