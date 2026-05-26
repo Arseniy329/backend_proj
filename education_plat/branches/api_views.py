@@ -146,9 +146,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
         Для адмінів повертає всі предмети.
         Для решти — тільки активні.
         """
-        qs = Subject.objects.prefetch_related(
-            'branches',
-        ).order_by('-created_at')
+        qs = Subject.objects.select_related('branch').order_by('-created_at')
 
         user = self.request.user
         if user.is_authenticated and user.is_staff:

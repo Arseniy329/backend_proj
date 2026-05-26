@@ -57,11 +57,11 @@ class Subject(models.Model):
         choices=Status.choices,
         default=Status.ACTIVE,
     )
-    branches = models.ManyToManyField(
+    branch = models.ForeignKey(
         Branch,
-        verbose_name='Гілки',
+        on_delete=models.CASCADE,
         related_name='subjects',
-        blank=True,
+        verbose_name='Філія',
     )
     created_at = models.DateTimeField('Дата створення', auto_now_add=True)
 
@@ -70,6 +70,9 @@ class Subject(models.Model):
         verbose_name_plural = 'Предмети'
         indexes = [
             models.Index(fields=['status'], name='idx_subject_status'),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'branch'], name='unique_subject_per_branch')
         ]
 
     def __str__(self):

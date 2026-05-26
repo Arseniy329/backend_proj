@@ -23,10 +23,9 @@ class BranchSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
-    branches = serializers.PrimaryKeyRelatedField(
-        many=True,
+    branch = serializers.PrimaryKeyRelatedField(
         queryset=Branch.objects.filter(status=Branch.Status.ACTIVE),
-        required=False,
+        required=True,
     )
 
     class Meta:
@@ -36,43 +35,31 @@ class SubjectSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'status',
-            'branches',
+            'branch',
             'created_at',
         ]
         read_only_fields = ['id', 'status', 'created_at']
 
     def validate(self, attrs):
         """
-        Перевірка унікальності назви предмета в межах кожної філії.
-
-        Subject ↔ Branch — це M2M, тому UniqueTogetherValidator
-        не підходить. Перевіряємо вручну: для кожної обраної філії
-        не повинно існувати іншого активного предмета з такою ж назвою.
+        Перевірка унікальності назви предмета в межах філії.
         """
         name = attrs.get('name', getattr(self.instance, 'name', None))
-        branches = attrs.get('branches', None)
-
-        if branches is None and self.instance:
-            branches = list(self.instance.branches.all())
-
-        if name and branches:
+        branch = attrs.get('branch', getattr(self.instance, 'branch', None))
+        if name and branch:
             existing = Subject.objects.filter(
                 name__iexact=name,
-                branches__in=branches,
+                branch=branch,
                 status=Subject.Status.ACTIVE,
             )
             if self.instance:
                 existing = existing.exclude(pk=self.instance.pk)
-
             if existing.exists():
-                conflicting = existing.first()
                 raise serializers.ValidationError({
                     'name': (
-                        f'Предмет з назвою "{name}" вже існує '
-                        f'у філії "{conflicting.branches.first()}".'
+                        f'Предмет з назвою "{name}" вже існує у філії "{branch}".'
                     ),
                 })
-
         return attrs
 
 
