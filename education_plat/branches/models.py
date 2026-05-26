@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 
 
+
 class Branch(models.Model):
 
     class Status(models.TextChoices):
@@ -22,6 +23,9 @@ class Branch(models.Model):
     class Meta:
         verbose_name = 'Гілка'
         verbose_name_plural = 'Гілки'
+        indexes = [
+            models.Index(fields=['status'], name='idx_branch_status'),
+        ]
 
     def __str__(self):
         return f'{self.name} ({self.city})'
@@ -64,6 +68,9 @@ class Subject(models.Model):
     class Meta:
         verbose_name = 'Предмет'
         verbose_name_plural = 'Предмети'
+        indexes = [
+            models.Index(fields=['status'], name='idx_subject_status'),
+        ]
 
     def __str__(self):
         return self.name
@@ -105,6 +112,9 @@ class Group(models.Model):
     class Meta:
         verbose_name = 'Група'
         verbose_name_plural = 'Групи'
+        indexes = [
+            models.Index(fields=['status'], name='idx_group_status'),
+        ]
 
     def __str__(self):
         return f'{self.name} ({self.branch.name})'
@@ -161,7 +171,7 @@ class Lesson(models.Model):
         null=True,
         blank=True,
     )
-    date = models.DateField('Дата', db_index=True)
+    date = models.DateField('Дата')
     start_time = models.TimeField('Час початку')
     end_time = models.TimeField('Час закінчення')
     topic = models.CharField('Тема', max_length=255, blank=True)
@@ -177,7 +187,6 @@ class Lesson(models.Model):
         max_length=10,
         choices=Status.choices,
         default=Status.SCHEDULED,
-        db_index=True,
     )
     created_at = models.DateTimeField('Дата створення', auto_now_add=True)
 
@@ -185,6 +194,16 @@ class Lesson(models.Model):
         verbose_name = 'Заняття'
         verbose_name_plural = 'Заняття'
         ordering = ['date', 'start_time']
+        indexes = [
+            models.Index(
+                fields=['date', 'start_time', 'end_time'],
+                name='idx_lesson_schedule',
+            ),
+            models.Index(fields=['date'], name='idx_lesson_date'),
+            models.Index(fields=['start_time'], name='idx_lesson_start'),
+            models.Index(fields=['end_time'], name='idx_lesson_end'),
+            models.Index(fields=['status'], name='idx_lesson_status'),
+        ]
 
     def __str__(self):
         return f'{self.group.name} — {self.date} {self.start_time}'
