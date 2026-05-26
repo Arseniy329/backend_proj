@@ -35,7 +35,11 @@ class StudentViewSet(viewsets.ModelViewSet):
         Для адмінів повертає всіх студентів.
         Для решти — тільки активних.
         """
-        qs = Student.objects.select_related('branch').order_by('-created_at')
+        qs = Student.objects.select_related(
+            'branch',
+        ).prefetch_related(
+            'groups',
+        ).order_by('-created_at')
 
         user = self.request.user
         if user.is_authenticated and user.is_staff:

@@ -146,7 +146,9 @@ class SubjectViewSet(viewsets.ModelViewSet):
         Для адмінів повертає всі предмети.
         Для решти — тільки активні.
         """
-        qs = Subject.objects.all().order_by('-created_at')
+        qs = Subject.objects.prefetch_related(
+            'branches',
+        ).order_by('-created_at')
 
         user = self.request.user
         if user.is_authenticated and user.is_staff:
@@ -389,6 +391,8 @@ class LessonViewSet(viewsets.ModelViewSet):
             return qs
 
         if user.is_authenticated and user.is_teacher:
+            if getattr(self, 'action', None) == 'mark_attendance':
+                return qs
             return qs.filter(teacher=user)
 
         return qs
@@ -611,7 +615,9 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         TEACHER — лише відвідуваність на своїх заняттях.
         """
         qs = Attendance.objects.select_related(
-            'lesson', 'lesson__group', 'student',
+            'lesson', 'lesson__group', 'lesson__group__branch',
+            'lesson__teacher', 'lesson__subject',
+            'student', 'student__branch',
         ).order_by('-created_at')
 
         user = self.request.user

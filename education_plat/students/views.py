@@ -19,7 +19,7 @@ def student_list(request):
     if branch_id:
         students = students.filter(branch_id=branch_id)
 
-    students = students.select_related('branch')
+    students = students.select_related('branch').prefetch_related('groups')
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
 
     return render(request, 'students/student_list.html', {

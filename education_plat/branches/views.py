@@ -74,7 +74,9 @@ def branch_restore(request, pk):
 @login_required
 def subject_list(request):
     branch_id = request.GET.get('branch')
-    subjects = Subject.objects.filter(status=Subject.Status.ACTIVE)
+    subjects = Subject.objects.filter(
+        status=Subject.Status.ACTIVE,
+    ).prefetch_related('branches')
     if branch_id:
         subjects = subjects.filter(branches__id=branch_id)
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
@@ -140,7 +142,11 @@ def subject_edit(request, pk):
 @login_required
 def group_list(request):
     branch_id = request.GET.get('branch')
-    groups = Group.objects.select_related('branch').prefetch_related('subjects').filter(status='active')
+    groups = Group.objects.select_related(
+        'branch',
+    ).prefetch_related(
+        'subjects', 'students',
+    ).filter(status='active')
     if branch_id:
         groups = groups.filter(branch_id=branch_id)
     branches = Branch.objects.filter(status=Branch.Status.ACTIVE)
