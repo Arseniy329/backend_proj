@@ -38,3 +38,9 @@ build/
 # Byte-compiled / optimized
 *.pyc
 *.pyo
+
+# Production secrets — never commit the real env file
+.env.prod
+
+# WhiteNoise / collectstatic output
+staticfiles/
