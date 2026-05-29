@@ -24,7 +24,6 @@ class SubjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'status', 'created_at')
     list_filter = ('status',)
     search_fields = ('name',)
-    filter_horizontal = ('branches',)
 
 
 @admin.register(Group)

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'ttps://backend-proj-fgmi.onrender.com';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -53,7 +53,7 @@ api.interceptors.response.use(
 
       try {
         const { data } = await axios.post(`${BASE_URL}/api/auth/refresh/`, { refresh });
-        localStorage.setItem('access',  data.access);
+        localStorage.setItem('access', data.access);
         localStorage.setItem('refresh', data.refresh);
         api.defaults.headers.common.Authorization = `Bearer ${data.access}`;
         processQueue(null, data.access);
